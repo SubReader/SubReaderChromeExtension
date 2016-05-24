@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+
+  "name": "SubReader",
+  "description": "Get your subtitles read aloud using this chrome extension and the SubReader app",
+  "version": "1.0",
+  "permissions": [
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://www.netflix.com/*"],
+      "js": ["netflix.js"]
+    }
+  ],
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "main.html"
+  }
+}
