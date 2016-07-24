@@ -1,0 +1,39 @@
+{
+  "name": "subreader-chrome-extension",
+  "version": "1.0.0",
+  "description": "The SubReader Chrome Extension",
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/.bin/babel src -d dist"
+  },
+  "config": {
+    "server": "http://api.subreader.dk"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ande765a/SubReaderChromeExtension.git"
+  },
+  "author": "Anders Bredgaard Thuesen <andersbthuesen@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ande765a/SubReaderChromeExtension/issues"
+  },
+  "homepage": "https://github.com/ande765a/SubReaderChromeExtension#readme",
+  "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-2": "^6.11.0",
+    "webpack": "^1.13.1"
+  },
+  "dependencies": {
+    "isomorphic-fetch": "^2.2.1",
+    "qrcode.react": "^0.6.1",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
+    "rx": "^4.1.0",
+    "socket.io-client": "^1.4.6"
+  }
+}
