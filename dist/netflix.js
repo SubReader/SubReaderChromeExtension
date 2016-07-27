@@ -91,7 +91,7 @@
 	        episode: null,
 	        season: null,
 	        cover: {
-	          uri: null
+	          uri: "http://static1.squarespace.com/static/550a10cbe4b03c7ec206488b/55165997e4b0617803522a94/55165997e4b0617803522aa1/1427529847895/iphone-6-plus-wallpaper-deep-red-facets.jpg?format=500w"
 	        }
 	      }
 	    };
@@ -102,9 +102,15 @@
 
 	var info$ = search$.flatMap(function () {
 	  return _rx.Observable.create(function (observer) {
-	    getInfo().then(function (info) {
-	      return observer.onNext(info);
-	    });
+	    function sendInfo() {
+	      getInfo().then(function (info) {
+	        return observer.onNext(info);
+	      });
+	    }
+	    var loop = setInterval(sendInfo, 2000);
+	    return function () {
+	      return clearInterval(loop);
+	    };
 	  });
 	});
 
