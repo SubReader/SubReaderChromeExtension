@@ -1,0 +1,48 @@
+main {
+  padding: 5px;
+}
+main::after {
+  display: block;
+  clear: both;
+  content: "";
+}
+body {
+  font-family: "Helvetica Neue";
+  font-weight: 300;
+}
+input, button {
+  padding: 6px 8px;
+  border: 1px solid #eee;
+  font-size: 1.2em;
+  outline: none;
+  margin-bottom: 2px;
+  font-weight: 200;
+
+}
+input[type="submit"], button {
+  background-color: #ddd;
+  color: black;
+  border: none;
+  float: right;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+input[type="submit"].primary, button.primary {
+  background-color: #1e8ee8;
+  color: white;
+}
+
+input[type="submit"]:active, button:active {
+  background-color: #bbb;
+}
+
+input[type="submit"].primary:active, button.primary:active {
+  background-color: #006dc4;
+}
+
+
+.title {
+  font-weight: 100;
+  text-align: center;
+}

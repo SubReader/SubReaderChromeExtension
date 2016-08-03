@@ -86,5 +86,5 @@ const cues$ = meta$
   })
   .switch()
 
-emit(cues$, "cues")
 emit(info$, "info")
+emit(cues$, "cues")
