@@ -7,14 +7,12 @@ const socket = io(server)
 const id$ = on$(["id"])
 const cues$ = on$(["cues"])
 const info$ = on$(["info"])
+const time$ = on$(["time"])
 
 cues$
   .combineLatest(id$, (cues, id) => ({ cues, id }))
   .subscribe(cuesObj => {
-    socket.emit("cues", {
-      ...cuesObj,
-      time: Date.now()
-    })
+    socket.emit("cues", cuesObj)
   })
 
 info$
@@ -25,6 +23,6 @@ info$
 
 time$
   .combineLatest(id$, (time, id) => ({ time, id }))
-  .subscribe(infoObj => {
-    socket.emit("time", infoObj)
+  .subscribe(timeObj => {
+    socket.emit("time", timeObj)
   })

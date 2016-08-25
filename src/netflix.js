@@ -1,8 +1,7 @@
 import { Observable } from "rx"
 import { emit, on$, on } from "./communication"
 import { escapeHTML, toArray, Maybe, find } from "./utils"
-
-const supportedLanguages = ["da", "en", "de", "fr", "sv", "no"]
+import { supportedLanguages } from "./config"
 
 function getLanguage() {
   return find(".player-timed-text-tracks > .player-track-selected")
@@ -86,5 +85,8 @@ const cues$ = meta$
   })
   .switch()
 
+const time$ = Observable.interval(5000).map(_ => Date.now())
+
+emit(time$, "time")
 emit(info$, "info")
 emit(cues$, "cues")
