@@ -4,25 +4,28 @@ import { emit, on$ } from "./communication"
 import { server } from "./config"
 const socket = io(server)
 
-const id$ = on$(["id"])
-const cues$ = on$(["cues"])
+const token$ = on$(["token"])
+const subtitles$ = on$(["subtitles"])
 const info$ = on$(["info"])
-const time$ = on$(["time"])
+const state$ = on$(["state"])
 
-cues$
-  .combineLatest(id$, (cues, id) => ({ cues, id }))
-  .subscribe(cuesObj => {
-    socket.emit("cues", cuesObj)
+subtitles$
+  .combineLatest(token$, (subtitles, token) => ({ subtitles, token }))
+  .subscribe(subtitlesObj => {
+    console.log("subtitles", subtitlesObj)
+    socket.emit("subtitles", subtitlesObj)
   })
 
 info$
-  .combineLatest(id$, (info, id) => ({ info, id }))
+  .combineLatest(token$, (info, token) => ({ info, token }))
   .subscribe(infoObj => {
+    console.log("info", infoObj)
     socket.emit("info", infoObj)
   })
 
-time$
-  .combineLatest(id$, (time, id) => ({ time, id }))
-  .subscribe(timeObj => {
-    socket.emit("time", timeObj)
+state$
+  .combineLatest(token$, (state, token) => ({ state, token }))
+  .subscribe(stateObj => {
+    console.log("state", stateObj)
+    socket.emit("state", stateObj)
   })

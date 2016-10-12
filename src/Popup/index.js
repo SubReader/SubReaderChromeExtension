@@ -22,16 +22,16 @@ export default class Popup extends Component {
       })
     })
 
-    const idPromise = fetch(`${server}/streams/create`)
+    const tokenPromise = fetch(`${server}/streams/create`)
       .then(res => res.json())
       .then(json => json.data)
-      .then(json => json._id)
+      .then(data => {
+        this.setState({ id: data.id })
+        return data.token
+      })
 
-    const id$ = Observable.fromPromise(idPromise)
-    emit(id$, "id")
-
-    id$.subscribe(id => this.setState({ id }))
-
+    const token$ = Observable.fromPromise(tokenPromise)
+    emit(token$, "token")
   }
 
   render() {
