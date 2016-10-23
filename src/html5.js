@@ -37,7 +37,8 @@ const subtitles$ = meta$
             cues: toArray(track.activeCues).map(cue => ({
               text: cue.text,
               timeIn: Date.now(),
-              timeOut: Date.now() + ((cue.endTime - cue.startTime) * 1000)
+              timeOut: Date.now() + ((cue.endTime - cue.startTime) * 1000),
+              id: cue.id
             }))
           }])
         }
