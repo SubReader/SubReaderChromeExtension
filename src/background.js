@@ -1,31 +1,59 @@
-import { Observable } from "rx"
-import io from "socket.io-client"
-import { emit, on$ } from "./communication"
-import { server } from "./config"
-const socket = io(server)
+import { Observable } from "rx";
+import { emit, on$ } from "./communication";
+import * as SubReaderAPI from "subreader-api";
 
-const token$ = on$(["token"])
-const subtitles$ = on$(["subtitles"])
-const info$ = on$(["info"])
-const state$ = on$(["state"])
+const subtitles$ = on$(["subtitles"]);
+const info$ = on$(["info"]);
+const state$ = on$(["state"]);
 
-subtitles$
-  .combineLatest(token$, (subtitles, token) => ({ subtitles, token }))
-  .subscribe(subtitlesObj => {
-    console.log("subtitles", subtitlesObj)
-    socket.emit("subtitles", subtitlesObj)
+const serviceToken$ = Observable.create(observer => {
+  function handleStorageChange(changes, namespace) {
+    const { service_token: serviceToken } = changes;
+    if (serviceToken) {
+      observer.next(serviceToken.newValue);
+    }
+  }
+
+  chrome.storage.onChanged.addListener(handleStorageChange);
+  chrome.storage.sync.get(
+    "service_token",
+    ({ service_token: serviceToken }) => {
+      if (serviceToken) {
+        observer.next(serviceToken);
+      }
+    }
+  );
+
+  return () => {
+    chrome.storage.onChanged.removeListener(handleStorageChange);
+  };
+});
+
+const streamToken$ = serviceToken$
+  .map(serviceToken => {
+    return Observable.fromPromise(SubReaderAPI.getStreamToken(serviceToken));
   })
+  .switch();
 
-info$
-  .combineLatest(token$, (info, token) => ({ info, token }))
-  .subscribe(infoObj => {
-    console.log("info", infoObj)
-    socket.emit("info", infoObj)
-  })
+const stream$ = Observable.combineLatest(state$, subtitles$, streamToken$)
+  .first()
+  .map(([state, subtitles, { token, id: streamId }]) => {
+    chrome.storage.sync.set({ streamId });
+    const stream = new SubReaderAPI.Stream(token, streamId);
+    stream.setSubtitles(subtitles);
+    return stream;
+  });
 
-state$
-  .combineLatest(token$, (state, token) => ({ state, token }))
-  .subscribe(stateObj => {
-    console.log("state", stateObj)
-    socket.emit("state", stateObj)
-  })
+stream$.subscribe(stream => {
+  console.log("Stream", stream);
+
+  subtitles$.subscribe(subtitles => {
+    console.log("Subtitle", subtitles);
+    stream.setSubtitles(subtitles);
+  });
+
+  state$.subscribe(state => {
+    console.log("State", state);
+    stream.setState(state);
+  });
+});

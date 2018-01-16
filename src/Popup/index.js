@@ -1,48 +1,62 @@
-import React, { Component } from "react"
-import ReactDOM from "react-dom"
-import fetch from "isomorphic-fetch"
-import { Observable } from "rx"
-import ConnectView from "./ConnectView"
-import { server } from "../config"
-import { emit } from "../communication"
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
+import QRCode from "qrcode.react";
+import * as SubReaderAPI from "subreader-api";
 
 export default class Popup extends Component {
-
   constructor(props) {
-    super(props)
-    this.state = { id: null, token: null }
+    super(props);
+    this.state = {
+      isLoading: true,
+      serviceToken: null,
+      authId: null,
+      streamId: ""
+    };
   }
 
   componentDidMount() {
-    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-      tabs.forEach(({ id }) => {
-        chrome.tabs.sendMessage(id, {
-          action: "search"
-        }, () => {})
-      })
-    })
+    chrome.storage.sync.get(
+      "service_token",
+      ({ service_token: serviceToken }) => {
+        if (serviceToken) {
+          this.setState({ serviceToken, isLoading: false });
+        } else {
+          SubReaderAPI.getAuthToken().then(
+            ({ token: authToken, id: authId }) => {
+              this.setState({ authId, isLoading: false });
+              SubReaderAPI.getServiceToken(authToken).then(serviceToken => {
+                chrome.storage.sync.set({ service_token: serviceToken }, () => {
+                  this.setState({ serviceToken });
+                });
+              });
+            }
+          );
+        }
+      }
+    );
 
-    const tokenPromise = fetch(`${server}/streams/create`)
-      .then(res => res.json())
-      .then(json => json.data)
-      .then(data => {
-        this.setState({ id: data.id })
-        return data.token
-      })
-
-    const token$ = Observable.fromPromise(tokenPromise)
-    emit(token$, "token")
+    chrome.storage.sync.get("streamId", ({ streamId }) => {
+      this.setState({ streamId });
+    });
   }
 
   render() {
-    const { id } = this.state
+    if (this.state.isLoading) {
+      return <div>Loading</div>;
+    }
+    if (this.state.serviceToken) {
+      return (
+        <div>
+          <QRCode value={`subreader://${this.state.streamId}`} />
+        </div>
+      );
+    }
     return (
       <div>
-        <h1>SubReader</h1>
-        {id && <ConnectView id={id} />}
+        <QRCode value={`subreader://authenticate?id=${this.state.authId}`} />
       </div>
-    )
+    );
   }
 }
 
-ReactDOM.render(<Popup/>, document.getElementById("app"))
+ReactDOM.render(<Popup />, document.getElementById("app"));
