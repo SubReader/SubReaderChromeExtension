@@ -1,6 +1,6 @@
 {
   "name": "subreader-chrome-extension",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "The SubReader Chrome Extension",
   "main": "dist/main.js",
   "scripts": {
@@ -32,10 +32,11 @@
   "dependencies": {
     "babel-preset-react": "^6.24.1",
     "lodash": "^4.17.4",
-    "qrcode.react": "^0.6.1",
-    "react": "^15.1.0",
-    "react-dom": "^15.1.0",
+    "qrcode.react": "^0.7.2",
+    "react": "16.2.0",
+    "react-dom": "16.2.0",
     "rx": "^4.1.0",
+    "sami-parser": "^0.5.3",
     "subreader-api": "https://github.com/ande765a/SubReaderAPI.git"
   }
 }

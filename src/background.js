@@ -16,9 +16,18 @@ const serviceToken$ = Observable.create(observer => {
 
   chrome.storage.onChanged.addListener(handleStorageChange);
   chrome.storage.sync.get(
-    "service_token",
-    ({ service_token: serviceToken }) => {
-      if (serviceToken) {
+    ["service_token", "service_token_expiration"],
+    ({
+      service_token: serviceToken,
+      service_token_expiration: serviceTokenExpiration
+    }) => {
+      if (Date.now() >= serviceTokenExpiration) {
+        chrome.storage.sync.remove([
+          "service_token",
+          "service_token_expiration",
+          "stream_id"
+        ]);
+      } else if (serviceToken) {
         observer.next(serviceToken);
       }
     }
@@ -29,23 +38,18 @@ const serviceToken$ = Observable.create(observer => {
   };
 });
 
-const streamToken$ = serviceToken$
-  .map(serviceToken => {
-    return Observable.fromPromise(SubReaderAPI.getStreamToken(serviceToken));
+const stream$ = serviceToken$
+  .switchMap(serviceToken => {
+    const streamToken$ = SubReaderAPI.getStreamToken(serviceToken);
+    return Observable.fromPromise(streamToken$).catch(() => Observable.empty());
   })
-  .switch();
-
-const stream$ = Observable.combineLatest(state$, subtitles$, streamToken$)
-  .first()
-  .map(([state, subtitles, { token, id: streamId }]) => {
-    chrome.storage.sync.set({ streamId });
-    const stream = new SubReaderAPI.Stream(token, streamId);
-    stream.setSubtitles(subtitles);
-    return stream;
+  .map(({ token, id: streamId }) => {
+    return new SubReaderAPI.Stream(token, streamId);
   });
 
 stream$.subscribe(stream => {
   console.log("Stream", stream);
+  chrome.storage.sync.set({ stream_id: stream.id });
 
   subtitles$.subscribe(subtitles => {
     console.log("Subtitle", subtitles);

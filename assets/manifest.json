@@ -1,8 +1,13 @@
 {
   "manifest_version": 2,
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   "name": "SubReader",
   "description": "Get your subtitles read aloud using this chrome extension and the SubReader app",
-  "version": "4.0.0",
+  "version": "0.2.0",
   "permissions": [
     "activeTab",
     "storage",
@@ -17,6 +22,10 @@
     {
       "matches": ["*://*.hbonordic.com/*"],
       "js": ["hbonordic.js"]
+    },
+    {
+      "matches": ["*://*.viaplay.dk/*"],
+      "js": ["viaplay.js"]
     },
     {
       "matches": ["http://*/*", "https://*/*"],
