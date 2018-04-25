@@ -67,6 +67,12 @@ class HBOInterceptor {
     });
   }
 
+  getInfo() {
+    const flashvars = parseQueryString(this.player.children.flashvars.value);
+    const title = flashvars.show;
+    this.dispatch("info", { title });
+  }
+
   fetchSubtitles() {
     const flashvars = parseQueryString(this.player.children.flashvars.value);
     Promise.all(
@@ -154,6 +160,7 @@ class HBOInterceptor {
         case "onJavaScriptBridgeCreated": {
           self.player = document.getElementById(playerId);
           self.fetchSubtitles();
+          self.getInfo();
         }
       }
     });

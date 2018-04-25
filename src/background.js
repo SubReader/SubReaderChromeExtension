@@ -60,4 +60,23 @@ stream$.subscribe(stream => {
     console.log("State", state);
     stream.setState(state);
   });
+
+  info$.subscribe(info => {
+    console.log("Info", info);
+    stream.setInfo(
+      Object.assign(
+        {},
+        {
+          title: "Chrome Video",
+          backdrop: {
+            uri: "https://static.subreader.dk/placeholder-placeholder.jpg"
+          },
+          cover: {
+            uri: "https://static.subreader.dk/placeholder-cover.jpg"
+          }
+        },
+        info
+      )
+    );
+  });
 });

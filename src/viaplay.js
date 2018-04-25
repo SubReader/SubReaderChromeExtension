@@ -27,4 +27,8 @@ window.addEventListener("sami-subtitles", ({ detail: samiSubtitles }) => {
   chrome.runtime.sendMessage({ action: "subtitles", payload: subtitles });
 });
 
+window.addEventListener("info", ({ detail: info }) => {
+  chrome.runtime.sendMessage({ action: "info", payload: info });
+});
+
 document.body.appendChild(script);

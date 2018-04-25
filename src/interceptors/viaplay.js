@@ -14,34 +14,79 @@ function fetchJSON(url, withCredentials) {
   return fetch(url, withCredentials).then(data => JSON.parse(data));
 }
 
-function check() {
+function parseQueryString(queryString) {
+  return queryString
+    .split("&")
+    .map(part => part.split("="))
+    .reduce((acc, [key, value]) => {
+      acc[key] = value;
+      return acc;
+    }, {});
+}
+
+function check(url) {
+  let streamUrl;
+
   if (viaplay && viaplay.streamUrl) {
+    streamUrl = viaplay.streamUrl;
+  } else {
+    const [_, query] = (url || location.href).split("?");
+    if (query) {
+      streamUrl = decodeURIComponent(parseQueryString(query).stream);
+    }
+  }
+
+  if (streamUrl) {
     console.log("[SubReader] Viaplay detected");
-    const mediaLink = viaplay.linkParser.expandApiLink(viaplay.streamUrl, {
+    const mediaLink = viaplay.linkParser.expandApiLink(streamUrl, {
       deviceId: "SubReader",
       deviceKey: "pcdash-dk",
       deviceName: "SubReader",
       deviceType: "SubReader",
       userAgent: "SubReader"
     });
-    fetchJSON(mediaLink, true)
-      .then(mediaInfo => {
-        return Promise.all(
-          mediaInfo._links["viaplay:sami"].map(subtitle => {
-            return fetch(subtitle.href, false).then(sami => {
-              return {
-                sami,
-                language: subtitle.languageCode
-              };
-            });
-          })
-        );
-      })
-      .then(samiSubtitles => {
+    fetchJSON(mediaLink, true).then(mediaInfo => {
+      Promise.all(
+        mediaInfo._links["viaplay:sami"].map(subtitle => {
+          return fetch(subtitle.href, false).then(sami => {
+            return {
+              sami,
+              language: subtitle.languageCode
+            };
+          });
+        })
+      ).then(samiSubtitles => {
         window.dispatchEvent(
           new CustomEvent("sami-subtitles", { detail: samiSubtitles })
         );
       });
+
+      fetchJSON(mediaInfo._links["viaplay:product"].href, true).then(info => {
+        try {
+          const { content } = info["_embedded"]["viaplay:product"];
+          const title = content.title;
+          coverUri = content.images.boxart.url;
+          backdropUri = content.images.landscape.url;
+          window.dispatchEvent(
+            new CustomEvent("info", {
+              detail: {
+                title,
+                cover: { uri: coverUri },
+                backdrop: { uri: backdropUri }
+              }
+            })
+          );
+        } catch (e) {
+          window.dispatchEvent(
+            new CustomEvent("info", {
+              detail: {
+                title: "Viaplay"
+              }
+            })
+          );
+        }
+      });
+    });
   }
 }
 
@@ -52,8 +97,8 @@ function intercept(rawFunc, interceptor) {
   };
 }
 
-history.pushState = intercept(history.pushState, () => {
-  check();
+history.pushState = intercept(history.pushState, (a, b, url) => {
+  check(url);
 });
 
 history.popState = intercept(history.popState, () => {

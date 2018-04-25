@@ -34,6 +34,10 @@ function sendSubtitles(subtitles) {
   window.dispatchEvent(new CustomEvent("subtitles", { detail: subtitles }));
 }
 
+function sendInfo(info) {
+  window.dispatchEvent(new CustomEvent("info", { detail: info }));
+}
+
 const subtitles = [];
 
 function handleSubtitle(rawSubtitle, type) {
@@ -41,14 +45,20 @@ function handleSubtitle(rawSubtitle, type) {
   sendSubtitles([subtitle]);
 }
 
+function sendTitle() {
+  const title = document.querySelector(".video-title");
+  sendInfo({
+    title: title ? title.innerText.trim() : "Netflix"
+  });
+}
+
 XMLHttpRequest.prototype.open = intercept(
   XMLHttpRequest.prototype.open,
   function(method, url) {
     if (url.indexOf("nflxvideo.net/?o") !== -1) {
-      console.log(this);
-      console.log(this.getResponseHeader("Content-Type"));
       this.addEventListener("load", () => {
         handleSubtitle(this.response, "ttml");
+        setTimeout(() => sendTitle(), 2000);
       });
     }
   }
