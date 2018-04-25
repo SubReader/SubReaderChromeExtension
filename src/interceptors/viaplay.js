@@ -65,8 +65,8 @@ function check(url) {
         try {
           const { content } = info["_embedded"]["viaplay:product"];
           const title = content.title;
-          coverUri = content.images.boxart.url;
-          backdropUri = content.images.landscape.url;
+          const coverUri = content.images.boxart.url;
+          const backdropUri = content.images.landscape.url;
           window.dispatchEvent(
             new CustomEvent("info", {
               detail: {
