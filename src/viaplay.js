@@ -16,7 +16,7 @@ window.addEventListener("sami-subtitles", ({ detail: samiSubtitles }) => {
       language: samiSub.language,
       cues: samiParser.parse(samiSub.sami).result.map(res => {
         return {
-          text: parseText(res.languages.en),
+          text: parseText(res.languages[Object.keys(res.languages)[0]]),
           timeIn: res.startTime,
           timeOut: res.endTime
         };
