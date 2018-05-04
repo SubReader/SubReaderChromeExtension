@@ -43,8 +43,17 @@ const stream$ = serviceToken$
     const streamToken$ = SubReaderAPI.getStreamToken(serviceToken);
     return Observable.fromPromise(streamToken$).catch(() => Observable.empty());
   })
-  .map(({ token, id: streamId }) => {
-    return new SubReaderAPI.Stream(token, streamId);
+  .switchMap(({ token, id: streamId }) => {
+    return Observable.create(observer => {
+      try {
+        const stream = new SubReaderAPI.Stream(token, streamId);
+        observer.onNext(stream);
+        return () => stream.socket.close();
+      } catch (error) {
+        observer.onError(error);
+        observer.onCompleted();
+      }
+    });
   });
 
 stream$.subscribe(stream => {

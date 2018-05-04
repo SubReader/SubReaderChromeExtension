@@ -6,8 +6,8 @@
     "128": "icon128.png"
   },
   "name": "SubReader Home",
-  "description": "Get your subtitles read aloud using this chrome extension and the SubReader app",
-  "version": "0.2.0",
+  "description": "Få underteksterne på Netflix, HBO Nordic og Viaplay læst højt med SubReader.",
+  "version": "1.0.0",
   "permissions": [
     "activeTab",
     "storage",

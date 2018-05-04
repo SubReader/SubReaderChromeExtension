@@ -27,7 +27,6 @@ new MutationObserver(() => {
     }, 5000);
 
     video.addEventListener("timeupdate", () => onTime());
-
     video.addEventListener("play", () => {
       chrome.runtime.sendMessage({
         action: "state",

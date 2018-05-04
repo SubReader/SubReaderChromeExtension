@@ -10,6 +10,7 @@ module.exports = {
     html5: "./html5",
     popup: "./Popup"
   },
+  mode: "production",
   node: {
     fs: "empty"
   },
@@ -18,7 +19,7 @@ module.exports = {
     filename: "[name].js"
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /.js$/,
         include: path.join(__dirname, "src"),

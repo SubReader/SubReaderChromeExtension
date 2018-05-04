@@ -13,47 +13,38 @@ export default class Popup extends Component {
     };
   }
 
-  getServiceToken() {
-    return SubReaderAPI.getAuthToken()
-      .then(({ token: authToken, id: authId }) => {
-        this.setState({ authId, isLoading: false });
-        return SubReaderAPI.getServiceToken(authToken);
-      })
-      .then(({ service_token: serviceToken, expires_in: expiresIn }) => {
-        chrome.storage.sync.set({
-          service_token: serviceToken,
-          service_token_expiration: Date.now() + expiresIn * 1000
-        });
-      });
-  }
-
   componentDidMount() {
-    chrome.storage.sync.get(
-      "service_token",
-      ({ service_token: serviceToken }) => {
-        if (serviceToken) {
-          this.setState({ isLoading: false });
-        } else {
-          this.getServiceToken();
+    chrome.storage.sync.get("stream_id", ({ stream_id }) => {
+      if (stream_id) {
+        this.setState({ streamId: stream_id, isLoading: false });
+      } else {
+        SubReaderAPI.getAuthToken(["premium"]).then(({ token, id }) => {
+          this.setState({
+            isLoading: false,
+            authId: id
+          });
+          SubReaderAPI.getServiceToken(token).then(
+            ({ service_token, expires_in }) => {
+              chrome.storage.sync.set({
+                service_token,
+                service_token_expiration: Date.now() + expires_in * 1000
+              });
+            }
+          );
+        });
+      }
+
+      chrome.storage.onChanged.addListener(changes => {
+        const { stream_id } = changes;
+        if (stream_id) {
+          this.setState({ streamId: stream_id.newValue, isLoading: false });
         }
-      }
-    );
-
-    chrome.storage.sync.get("stream_id", ({ stream_id: streamId }) => {
-      if (streamId) {
-        this.setState({ streamId });
-      }
-    });
-
-    chrome.storage.onChanged.addListener(changes => {
-      const { stream_id: streamId } = changes;
-      if (streamId) {
-        this.setState({ streamId: streamId.newValue });
-      }
+      });
     });
   }
 
   render() {
+    const { isLoading, streamId, authId } = this.state;
     return (
       <div
         style={{
@@ -69,25 +60,17 @@ export default class Popup extends Component {
         }}
       >
         <img src="logo.png" style={{ width: "164px", marginBottom: "10px" }} />
-        {(() => {
-          if (this.state.isLoading) {
-            return <div>Loading</div>;
-          }
-          if (this.state.streamId) {
-            return (
-              <div>
-                <QRCode value={`subreader://${this.state.streamId}`} />
-              </div>
-            );
-          }
-          return (
-            <div>
-              <QRCode
-                value={`subreader://authenticate?id=${this.state.authId}`}
-              />
-            </div>
-          );
-        })()}
+        {isLoading ? (
+          <div>Loading</div>
+        ) : streamId ? (
+          <div>
+            <QRCode value={`subreader://${streamId}`} />
+          </div>
+        ) : (
+          <div>
+            <QRCode value={`subreader://authenticate?id=${authId}`} />
+          </div>
+        )}
       </div>
     );
   }
