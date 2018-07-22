@@ -7,7 +7,7 @@
   },
   "name": "SubReader Home",
   "description": "Få underteksterne på Netflix, HBO Nordic og Viaplay læst højt med SubReader.",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "permissions": [
     "activeTab",
     "storage",
@@ -26,6 +26,10 @@
     {
       "matches": ["*://*.viaplay.dk/*"],
       "js": ["viaplay.js"]
+    },
+    {
+      "matches": ["*://dr.dk/tv/*"],
+      "js": ["drtv.js"]
     },
     {
       "matches": ["http://*/*", "https://*/*"],
