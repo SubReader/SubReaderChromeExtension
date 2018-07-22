@@ -21,7 +21,9 @@ const serviceToken$ = Observable.create(observer => {
       service_token: serviceToken,
       service_token_expiration: serviceTokenExpiration
     }) => {
+      console.log(serviceToken, serviceTokenExpiration);
       if (Date.now() >= serviceTokenExpiration) {
+        console.log("Deleting!");
         chrome.storage.sync.remove([
           "service_token",
           "service_token_expiration",
@@ -40,10 +42,12 @@ const serviceToken$ = Observable.create(observer => {
 
 const stream$ = serviceToken$
   .switchMap(serviceToken => {
+    console.log("Got service token", serviceToken);
     const streamToken$ = SubReaderAPI.getStreamToken(serviceToken);
     return Observable.fromPromise(streamToken$).catch(() => Observable.empty());
   })
   .switchMap(({ token, id: streamId }) => {
+    console.log("Get stream token", token);
     return Observable.create(observer => {
       try {
         const stream = new SubReaderAPI.Stream(token, streamId);
