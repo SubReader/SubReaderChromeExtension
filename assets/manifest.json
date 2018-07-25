@@ -28,10 +28,6 @@
       "js": ["viaplay.js"]
     },
     {
-      "matches": ["*://dr.dk/tv/*"],
-      "js": ["drtv.js"]
-    },
-    {
       "matches": ["http://*/*", "https://*/*"],
       "js": ["html5.js"]
     }
