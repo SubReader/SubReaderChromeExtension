@@ -26,7 +26,27 @@ module.exports = {
         include: path.join(__dirname, "src"),
         loader: "babel-loader",
         options: {
-          presets: ["env", "react"]
+          presets: [
+            [
+              "@babel/preset-env",
+              {
+                targets: {
+                  browsers: ["last 5 Chrome versions"]
+                },
+                modules: false,
+                loose: true
+              }
+            ],
+            "@babel/preset-react"
+          ],
+          plugins: [
+            [
+              "@babel/plugin-proposal-object-rest-spread",
+              {
+                useBuiltIns: true
+              }
+            ]
+          ]
         }
       }
     ]
