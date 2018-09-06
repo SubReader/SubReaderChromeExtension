@@ -25,26 +25,20 @@ function parseQueryString(queryString) {
 }
 
 function check(url) {
-  let streamUrl;
-
-  if (viaplay && viaplay.streamUrl) {
-    streamUrl = viaplay.streamUrl;
-  } else {
-    const [_, query] = (url || location.href).split("?");
-    if (query) {
-      streamUrl = decodeURIComponent(parseQueryString(query).stream);
-    }
-  }
-
-  if (streamUrl) {
+  const [path, guid] = (url || window.location.pathname).split("/").slice(1);
+  if (path === "player" && guid) {
     console.log("[SubReader] Viaplay detected");
-    const mediaLink = viaplay.linkParser.expandApiLink(streamUrl, {
-      deviceId: "SubReader",
-      deviceKey: "pcdash-dk",
-      deviceName: "SubReader",
-      deviceType: "SubReader",
-      userAgent: "SubReader"
-    });
+    const mediaLink =
+      `https://play.viaplay.dk/api/stream/byguid?` +
+      [
+        `deviceId=${localStorage.getItem("deviceId")}`,
+        `deviceName=web`,
+        `deviceType=pc`,
+        `userAgent=SubReader`,
+        `deviceKey=pc-dash`,
+        `guid=${guid}`
+      ].join("&");
+
     fetchJSON(mediaLink, true).then(mediaInfo => {
       Promise.all(
         mediaInfo._links["viaplay:sami"].map(subtitle => {
@@ -59,8 +53,15 @@ function check(url) {
         window.dispatchEvent(
           new CustomEvent("sami-subtitles", { detail: samiSubtitles })
         );
+        window.dispatchEvent(
+          new CustomEvent("info", {
+            detail: {
+              title: "Viaplay"
+            }
+          })
+        );
       });
-
+      /*
       fetchJSON(mediaInfo._links["viaplay:product"].href, true).then(info => {
         try {
           const { content } = info["_embedded"]["viaplay:product"];
@@ -86,6 +87,7 @@ function check(url) {
           );
         }
       });
+      */
     });
   }
 }
