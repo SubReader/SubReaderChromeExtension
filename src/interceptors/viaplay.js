@@ -1,4 +1,11 @@
-function fetch(url, withCredentials) {
+function intercept(rawFunc, interceptor) {
+  return function() {
+    interceptor.apply(this, arguments);
+    return rawFunc.apply(this, arguments);
+  };
+}
+
+function fetch(url, withCredentials = true) {
   const xhr = new XMLHttpRequest();
   return new Promise((resolve, reject) => {
     xhr.open("GET", url);
@@ -14,97 +21,64 @@ function fetchJSON(url, withCredentials) {
   return fetch(url, withCredentials).then(data => JSON.parse(data));
 }
 
-function parseQueryString(queryString) {
-  return queryString
-    .split("&")
-    .map(part => part.split("="))
-    .reduce((acc, [key, value]) => {
-      acc[key] = value;
-      return acc;
-    }, {});
+function sendInfo(info) {
+  window.dispatchEvent(
+    new CustomEvent("info", {
+      detail: info
+    })
+  );
 }
 
-function check(url) {
-  const [path, guid] = (url || window.location.pathname).split("/").slice(1);
-  if (path === "player" && guid) {
-    console.log("[SubReader] Viaplay detected");
-    const mediaLink =
-      `https://play.viaplay.dk/api/stream/byguid?` +
-      [
-        `deviceId=${localStorage.getItem("deviceId")}`,
-        `deviceName=web`,
-        `deviceType=pc`,
-        `userAgent=SubReader`,
-        `deviceKey=pc-dash`,
-        `guid=${guid}`
-      ].join("&");
+function sendSamiSubtitles(samiSubtitles) {
+  window.dispatchEvent(
+    new CustomEvent("sami-subtitles", { detail: samiSubtitles })
+  );
+}
 
-    fetchJSON(mediaLink, true).then(mediaInfo => {
-      Promise.all(
-        mediaInfo._links["viaplay:sami"].map(subtitle => {
-          return fetch(subtitle.href, false).then(sami => {
-            return {
-              sami,
-              language: subtitle.languageCode
-            };
-          });
-        })
-      ).then(samiSubtitles => {
-        window.dispatchEvent(
-          new CustomEvent("sami-subtitles", { detail: samiSubtitles })
-        );
-        window.dispatchEvent(
-          new CustomEvent("info", {
-            detail: {
-              title: "Viaplay"
-            }
-          })
-        );
+function handleIntercept(info) {
+  const { content, _links } = info._embedded["viaplay:product"];
+  sendInfo({
+    title: content.title,
+    cover: {
+      uri: content.images.boxart.url
+    },
+    backdrop: {
+      uri: content.images.landscape.url
+    }
+  });
+
+  fetchJSON(
+    window.viaplay.linkParser.expandApiLink(_links["viaplay:stream"].href, {
+      deviceId: localStorage.getItem("deviceId"),
+      deviceName: "web",
+      deviceKey: "pc-dash",
+      deviceType: "pc",
+      userAgent: "SubReader",
+      availabilityContext: null,
+      hls_fmp4: null
+    })
+  ).then(stream => {
+    Promise.all(
+      stream._links["viaplay:sami"].map(subtitle => {
+        return fetch(subtitle.href, false).then(sami => {
+          return {
+            sami,
+            language: subtitle.languageCode
+          };
+        });
+      })
+    ).then(sendSamiSubtitles);
+  });
+}
+
+XMLHttpRequest.prototype.open = intercept(
+  XMLHttpRequest.prototype.open,
+  function(method, url) {
+    if (url.includes("content.viaplay.dk/pcdash-dk")) {
+      this.addEventListener("load", function handler() {
+        handleIntercept(JSON.parse(this.response));
+        this.removeEventListener("load", handler);
       });
-      /*
-      fetchJSON(mediaInfo._links["viaplay:product"].href, true).then(info => {
-        try {
-          const { content } = info["_embedded"]["viaplay:product"];
-          const title = content.title;
-          const coverUri = content.images.boxart.url;
-          const backdropUri = content.images.landscape.url;
-          window.dispatchEvent(
-            new CustomEvent("info", {
-              detail: {
-                title,
-                cover: { uri: coverUri },
-                backdrop: { uri: backdropUri }
-              }
-            })
-          );
-        } catch (e) {
-          window.dispatchEvent(
-            new CustomEvent("info", {
-              detail: {
-                title: "Viaplay"
-              }
-            })
-          );
-        }
-      });
-      */
-    });
+    }
   }
-}
-
-function intercept(rawFunc, interceptor) {
-  return function() {
-    interceptor.apply(this, arguments);
-    return rawFunc.apply(this, arguments);
-  };
-}
-
-history.pushState = intercept(history.pushState, (a, b, url) => {
-  check(url);
-});
-
-history.popState = intercept(history.popState, () => {
-  check();
-});
-
-check();
+);
