@@ -10,10 +10,14 @@ function getTTMLSubtitle(url) {
 }
 
 function parseTimestamp(timestamp) {
+  const containsDot = timestamp.includes(".");
   const [hours, minutes, seconds, rest] = timestamp
-    .split(":")
+    .split(/\:|\./)
     .map(x => parseInt(x));
-  return ((hours * 60 + minutes) * 60 + seconds) * 1000 + rest * 10;
+  return (
+    ((hours * 60 + minutes) * 60 + seconds) * 1000 +
+    (containsDot ? rest : rest * 10)
+  );
 }
 
 function parseTTMLCues(xml) {
