@@ -1,3 +1,4 @@
+require("./html5");
 const fetch = require("isomorphic-fetch");
 const samiParser = require("sami-parser");
 const code = require("raw-loader!babel-loader!./interceptors/viaplay");

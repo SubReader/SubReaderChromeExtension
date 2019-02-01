@@ -7,8 +7,8 @@ module.exports = {
     netflix: "./netflix",
     hbonordic: "./hbonordic",
     viaplay: "./viaplay",
+    filmcentralen: "./filmcentralen",
     drtv: "./drtv",
-    html5: "./html5",
     popup: "./Popup"
   },
   mode: "production",

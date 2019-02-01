@@ -1,7 +1,10 @@
-require("./html5");
-const code = require("raw-loader!babel-loader!./interceptors/netflix");
+const code = require("raw-loader!babel-loader!./interceptors/filmcentralen");
 const script = document.createElement("script");
 script.textContent = code;
+
+window.addEventListener("state", ({ detail: state }) => {
+  chrome.runtime.sendMessage({ action: "state", payload: state });
+});
 
 window.addEventListener("subtitles", ({ detail: subtitles }) => {
   chrome.runtime.sendMessage({ action: "subtitles", payload: subtitles });
