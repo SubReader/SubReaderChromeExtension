@@ -12,7 +12,8 @@ activateHTML5({ service });
 function sendMessage({ action, payload }) {
   chrome.runtime.sendMessage({
     action,
-    payload
+    payload,
+    service
   });
 }
 

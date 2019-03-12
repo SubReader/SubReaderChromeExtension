@@ -7,25 +7,16 @@ import {
   Observable
 } from "apollo-boost";
 import gql from "graphql-tag";
-
-function observableFromPromise(promise) {
-  return new Observable(observer => {
-    promise
-      .then(result => {
-        observer.next(result);
-      })
-      .catch(error => {
-        observer.error(error);
-      })
-      .finally(() => {
-        observer.complete();
-      });
-  });
-}
+import {
+  observableFromPromise,
+  getDefaultTitleForService,
+  getRequiredFeaturesForService
+} from "./utils";
 
 const httpLink = new HttpLink({ uri: "https://api.subreader.dk" });
 const authLink = new ApolloLink((operation, forward) => {
   return observableFromPromise(getAccessToken()).flatMap(accessToken => {
+    console.log("Got access token.");
     operation.setContext({
       headers: {
         Authorization: `Bearer ${accessToken}`
@@ -40,7 +31,6 @@ const authorizedClient = new ApolloClient({
   link: authLink.concat(httpLink),
   cache
 });
-
 const client = new ApolloClient({
   link: httpLink,
   cache
@@ -90,10 +80,10 @@ function getAccessToken() {
         } else {
           function handleAddAccessToken(changes) {
             const { accessToken } = changes;
-            if (accessToken && accessToken.new) {
+            if (accessToken && accessToken.newValue) {
               // @ts-ignore
               chrome.storage.onChanged.removeListener(handleAddAccessToken);
-              resolve(accessToken.new);
+              resolve(accessToken.newValue);
             }
           }
 
@@ -104,32 +94,6 @@ function getAccessToken() {
       }
     );
   });
-}
-
-function getRequiredFeaturesForService(service) {
-  switch (service) {
-    case "netflix":
-    case "hbonordic":
-    case "viaplay":
-      return ["home", "school"];
-
-    case "mitcfu":
-    case "filmcentralen":
-    case "filmstriben":
-      return ["school"];
-
-    default:
-      return [];
-  }
-}
-
-function getDefaultTitleForService(service) {
-  switch (service) {
-    case "netflix":
-      return "Netflix";
-    default:
-      return service;
-  }
 }
 
 let registeredStreams = [];
@@ -161,7 +125,7 @@ function getStream(id, service) {
         }
       `,
       variables: {
-        requiredFeatures: getRequiredFeaturesForService(service)
+        requiredFeatures: [service]
       }
     })
     .then(({ data }) => {
@@ -198,7 +162,7 @@ chrome.tabs.onRemoved.addListener(tabId => {
 // @ts-ignore
 chrome.runtime.onMessage.addListener(
   async ({ action, service, payload }, sender, sendResponse) => {
-    console.log(sender.tab.id, service, action);
+    console.log(service, action);
     switch (action) {
       case "info": {
         console.log("Setting info", payload);
