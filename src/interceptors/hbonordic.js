@@ -53,7 +53,7 @@
         clearInterval(loop);
       }
       try {
-        const player = window.videojs(
+        const player = window["videojs"](
           document.getElementsByClassName("video-js")[0]
         );
 

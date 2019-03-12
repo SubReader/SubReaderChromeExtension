@@ -49,15 +49,18 @@
     });
 
     fetchJSON(
-      window.viaplay.linkParser.expandApiLink(_links["viaplay:stream"].href, {
-        deviceId: localStorage.getItem("deviceId"),
-        deviceName: "web",
-        deviceKey: "pc-dash",
-        deviceType: "pc",
-        userAgent: "SubReader",
-        availabilityContext: null,
-        hls_fmp4: null
-      })
+      window["viaplay"].linkParser.expandApiLink(
+        _links["viaplay:stream"].href,
+        {
+          deviceId: localStorage.getItem("deviceId"),
+          deviceName: "web",
+          deviceKey: "pc-dash",
+          deviceType: "pc",
+          userAgent: "SubReader",
+          availabilityContext: null,
+          hls_fmp4: null
+        }
+      )
     ).then(stream => {
       Promise.all(
         stream._links["viaplay:sami"].map(subtitle => {

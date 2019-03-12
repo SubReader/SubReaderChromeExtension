@@ -1,9 +1,22 @@
-require("./html5");
+// @ts-nocheck
+const { activateHTML5 } = require("./html5");
 const fetch = require("isomorphic-fetch");
 const samiParser = require("sami-parser");
 const code = require("raw-loader!babel-loader!./interceptors/viaplay");
 const script = document.createElement("script");
 script.textContent = code;
+
+const service = "viaplay";
+
+activateHTML5({ service });
+
+function sendMessage({ action, payload }) {
+  chrome.runtime.sendMessage({
+    action,
+    payload,
+    service
+  });
+}
 
 function parseText(text) {
   const div = document.createElement("div");
@@ -25,11 +38,17 @@ window.addEventListener("sami-subtitles", ({ detail: samiSubtitles }) => {
     };
   });
 
-  chrome.runtime.sendMessage({ action: "subtitles", payload: subtitles });
+  sendMessage({
+    action: "subtitles",
+    payload: subtitles
+  });
 });
 
 window.addEventListener("info", ({ detail: info }) => {
-  chrome.runtime.sendMessage({ action: "info", payload: info });
+  sendMessage({
+    action: "info",
+    payload: info
+  });
 });
 
 document.body.appendChild(script);

@@ -1,5 +1,6 @@
 (function() {
   try {
+    // @ts-ignore
     const player = window.theoplayer(document.getElementById("lS3MS"));
     const titleEl = document.getElementsByClassName("node-title")[0];
 

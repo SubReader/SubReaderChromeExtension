@@ -1,99 +1,241 @@
-import { Observable, defer, concat, combineLatest } from "rxjs";
-import { switchMap, map, share, filter } from "rxjs/operators";
-import { on$ } from "./communication";
-import * as SubReaderAPI from "subreader-api";
+import { Stream } from "subreader-api";
+import {
+  ApolloClient,
+  ApolloLink,
+  InMemoryCache,
+  HttpLink,
+  Observable
+} from "apollo-boost";
+import gql from "graphql-tag";
 
-const subtitles$ = on$(["subtitles"]);
-const info$ = on$(["info"]);
-const state$ = on$(["state"]);
-
-const serviceTokenInitial$ = Observable.create(observer => {
-  chrome.storage.local.get(
-    ["service_token", "service_token_expiration"],
-    ({ service_token, service_token_expiration }) => {
-      if (service_token && service_token_expiration) {
-        observer.next({
-          service_token,
-          service_token_expiration
-        });
-      }
-      observer.complete();
-    }
-  );
-});
-
-const serviceTokenChanges$ = Observable.create(observer => {
-  function handleStorageChange(changes, namespace) {
-    const { service_token, service_token_expiration } = changes;
-    if (
-      service_token &&
-      service_token_expiration &&
-      service_token.newValue &&
-      service_token_expiration.newValue
-    ) {
-      observer.next({
-        service_token: service_token.newValue,
-        service_token_expiration: service_token_expiration.newValue
+function observableFromPromise(promise) {
+  return new Observable(observer => {
+    promise
+      .then(result => {
+        observer.next(result);
+      })
+      .catch(error => {
+        observer.error(error);
+      })
+      .finally(() => {
+        observer.complete();
       });
-    }
-  }
-  chrome.storage.onChanged.addListener(handleStorageChange);
-  return () => {
-    chrome.storage.onChanged.removeListener(handleStorageChange);
-  };
-});
+  });
+}
 
-const serviceToken$ = concat(serviceTokenInitial$, serviceTokenChanges$).pipe(
-  share()
-);
-
-const stream$ = serviceToken$.pipe(
-  filter(({ service_token_expiration }) => {
-    return service_token_expiration > Date.now();
-  }),
-  map(({ service_token }) => service_token),
-  switchMap(service_token => {
-    return defer(() => {
-      return SubReaderAPI.getStreamToken(service_token);
+const httpLink = new HttpLink({ uri: "https://api.subreader.dk" });
+const authLink = new ApolloLink((operation, forward) => {
+  return observableFromPromise(getAccessToken()).flatMap(accessToken => {
+    operation.setContext({
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
     });
-  }),
-  map(({ token, id }) => {
-    return new SubReaderAPI.Stream(token, id);
-  }),
-  share()
-);
-
-serviceToken$.subscribe(({ service_token_expiration }) => {
-  if (service_token_expiration <= Date.now()) {
-    chrome.storage.local.remove("stream_id");
-  }
-});
-
-stream$.subscribe(stream => {
-  console.log("Stream", stream);
-  chrome.storage.local.set({ stream_id: stream.id });
-});
-
-combineLatest(stream$, subtitles$).subscribe(([stream, subtitles]) => {
-  console.log("Subtitles", subtitles);
-  stream.setSubtitles(subtitles);
-});
-
-combineLatest(stream$, state$).subscribe(([stream, state]) => {
-  console.log("State", state);
-  stream.setState(state);
-});
-
-combineLatest(stream$, info$).subscribe(([stream, info]) => {
-  console.log("Info", info);
-  stream.setInfo({
-    title: "Chrome Video",
-    backdrop: {
-      uri: "https://static.subreader.dk/placeholder-placeholder.jpg"
-    },
-    cover: {
-      uri: "https://static.subreader.dk/placeholder-cover.jpg"
-    },
-    ...info
+    return forward(operation);
   });
 });
+
+const cache = new InMemoryCache();
+const authorizedClient = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache
+});
+
+const client = new ApolloClient({
+  link: httpLink,
+  cache
+});
+
+function getAccessToken() {
+  return new Promise(resolve => {
+    // @ts-ignore
+    chrome.storage.sync.get(
+      ["accessToken", "expirationDate", "refreshToken"],
+      async ({ accessToken, expirationDate, refreshToken }) => {
+        if (accessToken) {
+          if (new Date(expirationDate) <= new Date()) {
+            const { data } = await client.mutate({
+              mutation: gql`
+                mutation RefreshAccessToken($refreshToken: String!) {
+                  refreshAccessToken(refreshToken: $refreshToken) {
+                    accessToken {
+                      value
+                      expiresIn
+                    }
+                  }
+                }
+              `,
+              variables: {
+                refreshToken
+              }
+            });
+            const { refreshAccessToken } = data;
+            const { accessToken } = refreshAccessToken;
+
+            // @ts-ignore
+            chrome.storage.sync.set(
+              {
+                accessToken: accessToken.value,
+                expirationDate: new Date(
+                  Date.now() + accessToken.expiresIn * 1000
+                ).toISOString()
+              },
+              () => {
+                resolve(accessToken.value);
+              }
+            );
+          } else {
+            resolve(accessToken);
+          }
+        } else {
+          function handleAddAccessToken(changes) {
+            const { accessToken } = changes;
+            if (accessToken && accessToken.new) {
+              // @ts-ignore
+              chrome.storage.onChanged.removeListener(handleAddAccessToken);
+              resolve(accessToken.new);
+            }
+          }
+
+          // Subscribe to accessToken updates
+          // @ts-ignore
+          chrome.storage.onChanged.addListener(handleAddAccessToken);
+        }
+      }
+    );
+  });
+}
+
+function getRequiredFeaturesForService(service) {
+  switch (service) {
+    case "netflix":
+    case "hbonordic":
+    case "viaplay":
+      return ["home", "school"];
+
+    case "mitcfu":
+    case "filmcentralen":
+    case "filmstriben":
+      return ["school"];
+
+    default:
+      return [];
+  }
+}
+
+function getDefaultTitleForService(service) {
+  switch (service) {
+    case "netflix":
+      return "Netflix";
+    default:
+      return service;
+  }
+}
+
+let registeredStreams = [];
+
+function getStream(id, service) {
+  const entry = registeredStreams.find(entry => {
+    return entry.id == id && entry.service == service;
+  });
+  if (entry) return entry.stream;
+
+  const stream = authorizedClient
+    .mutate({
+      mutation: gql`
+        mutation CreateUserStream(
+          $stream: UserStreamInput
+          $requiredFeatures: [String]
+        ) {
+          createUserStream(
+            stream: $stream
+            requiredFeatures: $requiredFeatures
+          ) {
+            stream {
+              id
+            }
+            streamToken {
+              value
+            }
+          }
+        }
+      `,
+      variables: {
+        requiredFeatures: getRequiredFeaturesForService(service)
+      }
+    })
+    .then(({ data }) => {
+      const { createUserStream } = data;
+      const { stream: streamInfo, streamToken } = createUserStream;
+      return new Stream(streamToken.value, streamInfo.id);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+
+  registeredStreams.push({
+    id,
+    service,
+    stream
+  });
+
+  return stream;
+}
+
+// @ts-ignore
+chrome.tabs.onRemoved.addListener(tabId => {
+  registeredStreams
+    .filter(entry => entry.id == tabId)
+    .forEach(entry => {
+      entry.stream.then(s => {
+        s.socket.close();
+      });
+    });
+
+  registeredStreams = registeredStreams.filter(entry => entry.id !== tabId);
+});
+
+// @ts-ignore
+chrome.runtime.onMessage.addListener(
+  async ({ action, service, payload }, sender, sendResponse) => {
+    console.log(sender.tab.id, service, action);
+    switch (action) {
+      case "info": {
+        console.log("Setting info", payload);
+        const stream = await getStream(sender.tab.id, service);
+        stream.setInfo({
+          title: getDefaultTitleForService(service),
+          backdrop: {
+            uri: "https://static.subreader.dk/placeholder-placeholder.jpg"
+          },
+          cover: {
+            uri: "https://static.subreader.dk/placeholder-cover.jpg"
+          },
+          ...payload
+        });
+        break;
+      }
+      case "subtitles": {
+        console.log("Setting subtitles", payload);
+        const stream = await getStream(sender.tab.id, service);
+        stream.setSubtitles(payload);
+        break;
+      }
+      case "state": {
+        console.log("Setting state", payload);
+        const stream = await getStream(sender.tab.id, service);
+        stream.setState(payload);
+        break;
+      }
+      case "promote": {
+        console.log("Promoting stream", payload);
+        break;
+      }
+
+      case "getStreams": {
+        sendResponse({ streams: registeredStreams });
+      }
+    }
+    return true;
+  }
+);
