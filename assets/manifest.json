@@ -26,6 +26,10 @@
     {
       "matches": ["*://*.viaplay.dk/*", "*://viaplay.dk/*"],
       "js": ["viaplay.js"]
+    },
+    {
+      "matches": ["*://*.hval.dk/mitcfu/*", "*://hval.dk/mitcfu/*"],
+      "js": ["mitcfu.js"]
     }
   ],
   "browser_action": {

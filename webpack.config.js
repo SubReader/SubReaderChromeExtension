@@ -8,6 +8,7 @@ module.exports = {
     hbonordic: "./hbonordic",
     viaplay: "./viaplay",
     filmcentralen: "./filmcentralen",
+    mitcfu: "./mitcfu",
     drtv: "./drtv",
     popup: "./Popup"
   },

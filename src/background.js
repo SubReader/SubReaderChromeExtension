@@ -7,11 +7,7 @@ import {
   Observable
 } from "apollo-boost";
 import gql from "graphql-tag";
-import {
-  observableFromPromise,
-  getDefaultTitleForService,
-  getRequiredFeaturesForService
-} from "./utils";
+import { observableFromPromise, getDefaultTitleForService } from "./utils";
 
 const httpLink = new HttpLink({ uri: "https://api.subreader.dk" });
 const authLink = new ApolloLink((operation, forward) => {
