@@ -1,12 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import ApolloClient from "apollo-boost";
+import client from "./client";
 import { ApolloProvider } from "react-apollo";
 import Popup from "./Popup";
-
-const client = new ApolloClient({
-  uri: "https://api.subreader.dk"
-});
 
 function Entry() {
   return (

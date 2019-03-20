@@ -3,7 +3,11 @@ import styled from "styled-components";
 import QRCode from "qrcode.react";
 
 const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   min-width: 200px;
+  min-height: 200px;
   padding: 1em;
 `;
 
@@ -70,7 +74,7 @@ export default function Popup() {
     );
   }
 
-  const stream = streams.find(stream => stream.id == currentTabId);
+  const entry = streams.find(stream => stream.id == currentTabId);
 
   return (
     <Container>
@@ -78,15 +82,26 @@ export default function Popup() {
         <div>Loading...</div>
       ) : user ? (
         <div>
-          <h1>Velkommen {user.name}</h1>
-          {stream ? (
-            <h2>Showing {stream.id}</h2>
+          {entry ? (
+            entry.status == "resolved" ? (
+              <div>
+                <QRCode
+                  size={180}
+                  level="L"
+                  value={`subreader://${entry.stream.id}`}
+                />
+              </div>
+            ) : null
           ) : (
-            <ul>
-              {streams.map((stream, i) => (
-                <li key={i}>{JSON.stringify(stream)}</li>
-              ))}
-            </ul>
+            <div>
+              {streams.length > 0 ? (
+                streams.map((entry, i) => (
+                  <li key={i}>{JSON.stringify(entry)}</li>
+                ))
+              ) : (
+                <h1>Åben en side for at bruge SubReader</h1>
+              )}
+            </div>
           )}
           <button onClick={handleLogout}>Log ud</button>
         </div>

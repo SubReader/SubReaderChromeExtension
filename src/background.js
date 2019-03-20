@@ -12,7 +12,6 @@ import { observableFromPromise, getDefaultTitleForService } from "./utils";
 const httpLink = new HttpLink({ uri: "https://api.subreader.dk" });
 const authLink = new ApolloLink((operation, forward) => {
   return observableFromPromise(getAccessToken()).flatMap(accessToken => {
-    console.log("Got access token.");
     operation.setContext({
       headers: {
         Authorization: `Bearer ${accessToken}`
@@ -92,15 +91,23 @@ function getAccessToken() {
   });
 }
 
-let registeredStreams = [];
+let openedStreams = [];
 
-function getStream(id, service) {
-  const entry = registeredStreams.find(entry => {
+function getStreamEntry(id, service) {
+  const entry = openedStreams.find(entry => {
     return entry.id == id && entry.service == service;
   });
-  if (entry) return entry.stream;
+  if (entry) return entry;
 
-  const stream = authorizedClient
+  const newEntry = {
+    id,
+    service,
+    status: "pending"
+  };
+
+  openedStreams.push(newEntry);
+
+  authorizedClient
     .mutate({
       mutation: gql`
         mutation CreateUserStream(
@@ -127,32 +134,28 @@ function getStream(id, service) {
     .then(({ data }) => {
       const { createUserStream } = data;
       const { stream: streamInfo, streamToken } = createUserStream;
-      return new Stream(streamToken.value, streamInfo.id);
+      const stream = new Stream(streamToken.value, streamInfo.id);
+
+      newEntry.status = "resolved";
+      newEntry.stream = stream;
     })
     .catch(error => {
-      console.error(error);
+      newEntry.status = "rejected";
+      newEntry.error = error;
     });
 
-  registeredStreams.push({
-    id,
-    service,
-    stream
-  });
-
-  return stream;
+  return newEntry;
 }
 
 // @ts-ignore
 chrome.tabs.onRemoved.addListener(tabId => {
-  registeredStreams
-    .filter(entry => entry.id == tabId)
+  openedStreams
+    .filter(entry => entry.id == tabId && entry.status == "resolved")
     .forEach(entry => {
-      entry.stream.then(s => {
-        s.socket.close();
-      });
+      entry.stream.socket.close();
     });
 
-  registeredStreams = registeredStreams.filter(entry => entry.id !== tabId);
+  openedStreams = openedStreams.filter(entry => entry.id !== tabId);
 });
 
 // @ts-ignore
@@ -162,29 +165,35 @@ chrome.runtime.onMessage.addListener(
     switch (action) {
       case "info": {
         console.log("Setting info", payload);
-        const stream = await getStream(sender.tab.id, service);
-        stream.setInfo({
-          title: getDefaultTitleForService(service),
-          backdrop: {
-            uri: "https://static.subreader.dk/placeholder-placeholder.jpg"
-          },
-          cover: {
-            uri: "https://static.subreader.dk/placeholder-cover.jpg"
-          },
-          ...payload
-        });
+        const { stream } = getStreamEntry(sender.tab.id, service);
+        if (stream) {
+          stream.setInfo({
+            title: getDefaultTitleForService(service),
+            backdrop: {
+              uri: "https://static.subreader.dk/placeholder-placeholder.jpg"
+            },
+            cover: {
+              uri: "https://static.subreader.dk/placeholder-cover.jpg"
+            },
+            ...payload
+          });
+        }
         break;
       }
       case "subtitles": {
         console.log("Setting subtitles", payload);
-        const stream = await getStream(sender.tab.id, service);
-        stream.setSubtitles(payload);
+        const { stream } = getStreamEntry(sender.tab.id, service);
+        if (stream) {
+          stream.setSubtitles(payload);
+        }
         break;
       }
       case "state": {
         console.log("Setting state", payload);
-        const stream = await getStream(sender.tab.id, service);
-        stream.setState(payload);
+        const { stream } = getStreamEntry(sender.tab.id, service);
+        if (stream) {
+          stream.setState(payload);
+        }
         break;
       }
       case "promote": {
@@ -193,7 +202,16 @@ chrome.runtime.onMessage.addListener(
       }
 
       case "getStreams": {
-        sendResponse({ streams: registeredStreams });
+        sendResponse({
+          streams: openedStreams.map(entry => ({
+            ...entry,
+            stream: entry.stream
+              ? {
+                  id: entry.stream.id
+                }
+              : null
+          }))
+        });
       }
     }
     return true;
