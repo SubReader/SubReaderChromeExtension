@@ -1,17 +1,53 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import QRCode from "qrcode.react";
+import Login from "./Login";
 
-const Container = styled.div`
+import LogoComponent from "./Logo";
+import LoadingIndicator from "./LoadingIndicator";
+
+const PopupWrapper = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 200px;
-  min-height: 200px;
-  padding: 1em;
+  flex-direction: column;
+  min-width: 250px;
+  min-height: 300px;
 `;
 
-import Login from "./login";
+const PopupContainer = styled.div`
+  display: flex;
+  flex: 1;
+`;
+
+const LogoContainer = styled.div`
+  margin-top: 20px;
+`;
+
+const Logo = styled(LogoComponent)`
+  display: block;
+  width: 140px;
+  margin: 0 auto;
+`;
+
+const MainWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 10px;
+`;
+
+const QRContainer = styled.div`
+  flex: 1;
+`;
+
+const StreamsContainer = styled.div`
+  flex: 1;
+`;
+
+const IntroContainer = styled.div`
+  display: flex;
+  flex: 1;
+  align-items: center;
+`;
 
 export default function Popup() {
   const [loading, setLoading] = useState(false);
@@ -28,14 +64,9 @@ export default function Popup() {
     });
 
     // @ts-ignore
-    chrome.runtime.sendMessage(
-      {
-        action: "getStreams"
-      },
-      ({ streams }) => {
-        setStreams(streams);
-      }
-    );
+    chrome.runtime.sendMessage({ action: "getStreams" }, ({ streams }) => {
+      setStreams(streams);
+    });
 
     // @ts-ignore
     chrome.tabs.getSelected(null, tab => {
@@ -77,37 +108,46 @@ export default function Popup() {
   const entry = streams.find(stream => stream.id == currentTabId);
 
   return (
-    <Container>
-      {loading ? (
-        <div>Loading...</div>
-      ) : user ? (
-        <div>
-          {entry ? (
-            entry.status == "resolved" ? (
-              <div>
-                <QRCode
-                  size={180}
-                  level="L"
-                  value={`subreader://${entry.stream.id}`}
-                />
-              </div>
-            ) : null
-          ) : (
-            <div>
-              {streams.length > 0 ? (
-                streams.map((entry, i) => (
-                  <li key={i}>{JSON.stringify(entry)}</li>
-                ))
-              ) : (
-                <h1>Åben en side for at bruge SubReader</h1>
-              )}
-            </div>
-          )}
-          <button onClick={handleLogout}>Log ud</button>
-        </div>
-      ) : (
-        <Login onLogin={handleLogin} />
-      )}
-    </Container>
+    <PopupWrapper>
+      <LogoContainer>
+        <Logo />
+      </LogoContainer>
+      <PopupContainer>
+        {loading ? (
+          <LoadingIndicator />
+        ) : user ? (
+          <MainWrapper>
+            {entry ? (
+              entry.status == "resolved" ? (
+                <QRContainer>
+                  <QRCode
+                    size={180}
+                    level="L"
+                    value={`subreader://${entry.stream.id}`}
+                  />
+                </QRContainer>
+              ) : null
+            ) : streams.length > 0 ? (
+              <StreamsContainer>
+                <ul>
+                  {streams.map((entry, i) => (
+                    <li key={i}>{JSON.stringify(entry)}</li>
+                  ))}
+                </ul>
+              </StreamsContainer>
+            ) : (
+              <IntroContainer>
+                <h2 style={{ textAlign: "center" }}>
+                  Åben en side for at bruge SubReader
+                </h2>
+              </IntroContainer>
+            )}
+            <button onClick={handleLogout}>Log ud</button>
+          </MainWrapper>
+        ) : (
+          <Login onLogin={handleLogin} />
+        )}
+      </PopupContainer>
+    </PopupWrapper>
   );
 }
