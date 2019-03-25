@@ -21,7 +21,10 @@
       return {
         timeIn: parseTime(entry.Time),
         timeOut: parseTime(entry.Time) + parseTime(entry.Duration),
-        text: entry.Line1 + (entry.Line2 ? "\n " + entry.Line2 : "")
+        text:
+          entry.Line1 +
+          (entry.Line2 ? "\n " + entry.Line2 : "") +
+          (entry.Line3 ? "\n " + entry.Line3 : "")
       };
     });
   }
@@ -52,19 +55,21 @@
           .map(subtitle => {
             const links = [].concat.apply(
               [],
-              subtitle.renditions.map(r => r.links)
+              (subtitle.renditions || []).map(r => r.links)
             );
-            const vttLinks = links.filter(l => l.mimeType == "text/vtt");
             const jsonLinks = links.filter(
               l => l.mimeType == "application/json"
             );
 
-            const language =
-              subtitle.language || subtitle.renditions[0].language;
+            let language;
+            try {
+              language = subtitle.language || subtitles.renditions[0].language;
+            } catch (error) {
+              language = "da";
+            }
 
             if (jsonLinks.length > 0) {
               // Use json links
-              console.log(subtitle);
               return fetch(jsonLinks[0].href.replace("http://", "//"))
                 .then(text => JSON.parse(text))
                 .then(data => {
@@ -75,12 +80,14 @@
                 });
             } else {
               // Use vtt links
-              return Promise.resolve();
+              return Promise.reject();
             }
-          });
+          })
+          .map(promise => promise.catch(() => null));
 
         return Promise.all(subtitles);
       })
+      .then(subtitles => subtitles.filter(s => s != null))
       .then(subtitles => {
         sendSubtitles(subtitles);
       });

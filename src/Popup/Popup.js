@@ -35,8 +35,16 @@ const MainWrapper = styled.div`
   padding: 10px;
 `;
 
-const QRContainer = styled.div`
+const QRWrapper = styled.div`
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const QRContainer = styled.div`
+  padding: 10px;
 `;
 
 const StreamsContainer = styled.div`
@@ -44,9 +52,21 @@ const StreamsContainer = styled.div`
 `;
 
 const IntroContainer = styled.div`
-  display: flex;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
+`;
+
+const Title = styled.h2`
+  text-align: center;
+`;
+
+const VideoGuide = styled.video`
+  width: 100%;
+  margin: 0 auto;
+  min-width: 420px;
 `;
 
 export default function Popup() {
@@ -118,31 +138,35 @@ export default function Popup() {
         ) : user ? (
           <MainWrapper>
             {entry ? (
-              entry.status == "resolved" ? (
-                <QRContainer>
-                  <QRCode
-                    size={180}
-                    level="L"
-                    value={`subreader://${entry.stream.id}`}
-                  />
-                </QRContainer>
+              entry.status == "pending" ? (
+                <LoadingIndicator />
+              ) : entry.status == "resolved" ? (
+                <QRWrapper>
+                  <Title>Scan QR koden med SubReader appen</Title>
+                  <QRContainer>
+                    <QRCode
+                      size={180}
+                      level="L"
+                      value={`subreader://${entry.stream.id}`}
+                    />
+                  </QRContainer>
+                </QRWrapper>
+              ) : entry.status == "rejected" ? (
+                <div>
+                  <Title>Kunne ikke åbne stream.</Title>
+                </div>
               ) : null
-            ) : streams.length > 0 ? (
-              <StreamsContainer>
-                <ul>
-                  {streams.map((entry, i) => (
-                    <li key={i}>{JSON.stringify(entry)}</li>
-                  ))}
-                </ul>
-              </StreamsContainer>
             ) : (
               <IntroContainer>
-                <h2 style={{ textAlign: "center" }}>
-                  Åben en side for at bruge SubReader
-                </h2>
+                <Title>Åben en streaming tjeneste for at bruge SubReader</Title>
+                <VideoGuide
+                  src="video1.mp4"
+                  autoPlay={true}
+                  controls={true}
+                  loop={true}
+                />
               </IntroContainer>
             )}
-            <button onClick={handleLogout}>Log ud</button>
           </MainWrapper>
         ) : (
           <Login onLogin={handleLogin} />

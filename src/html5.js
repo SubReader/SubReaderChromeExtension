@@ -5,7 +5,8 @@ function activateHTML5({ service }) {
   let found = false;
 
   new MutationObserver(() => {
-    const video = document.querySelector("video");
+    const video =
+      document.querySelector("video[src]") || document.querySelector("video");
     if (!video && found) {
       found = false;
       chrome.runtime.sendMessage({

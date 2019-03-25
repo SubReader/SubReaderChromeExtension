@@ -1,10 +1,9 @@
-import { Stream } from "subreader-api";
+import SubReader from "subreader-api";
 import {
   ApolloClient,
   ApolloLink,
   InMemoryCache,
-  HttpLink,
-  Observable
+  HttpLink
 } from "apollo-boost";
 import gql from "graphql-tag";
 import { observableFromPromise, getDefaultTitleForService } from "./utils";
@@ -93,15 +92,32 @@ function getAccessToken() {
 
 let openedStreams = [];
 
-function getStreamEntry(id, service) {
+function getStreamEntry(id, service, stream) {
+  for (const entry of openedStreams) {
+    if (
+      entry.id == id &&
+      entry.status == "resolved" &&
+      !entry.supportedServices.includes(service)
+    ) {
+      entry.stream.setState({ playing: false, time: 0 });
+      entry.stream.socket.close();
+      entry.status = "closed";
+    }
+  }
+
   const entry = openedStreams.find(entry => {
-    return entry.id == id && entry.service == service;
+    return (
+      entry.id == id &&
+      entry.supportedServices.includes(service) &&
+      (entry.status == "pending" || entry.status == "resolved")
+    );
   });
+
   if (entry) return entry;
 
   const newEntry = {
     id,
-    service,
+    supportedServices: [service],
     status: "pending"
   };
 
@@ -110,34 +126,35 @@ function getStreamEntry(id, service) {
   authorizedClient
     .mutate({
       mutation: gql`
-        mutation CreateUserStream(
-          $stream: UserStreamInput
-          $requiredFeatures: [String]
-        ) {
-          createUserStream(
-            stream: $stream
-            requiredFeatures: $requiredFeatures
-          ) {
+        mutation CreateUserStream($stream: UserStreamInput, $service: String!) {
+          createUserStream(stream: $stream, service: $service) {
             stream {
               id
             }
             streamToken {
               value
             }
+            supportedServices
           }
         }
       `,
       variables: {
-        requiredFeatures: [service]
+        service,
+        stream
       }
     })
     .then(({ data }) => {
       const { createUserStream } = data;
-      const { stream: streamInfo, streamToken } = createUserStream;
-      const stream = new Stream(streamToken.value, streamInfo.id);
+      const {
+        stream: streamInfo,
+        streamToken,
+        supportedServices
+      } = createUserStream;
+      const stream = new SubReader.Stream(streamToken.value, streamInfo.id);
 
       newEntry.status = "resolved";
       newEntry.stream = stream;
+      newEntry.supportedServices = supportedServices;
     })
     .catch(error => {
       newEntry.status = "rejected";
@@ -152,10 +169,10 @@ chrome.tabs.onRemoved.addListener(tabId => {
   openedStreams
     .filter(entry => entry.id == tabId && entry.status == "resolved")
     .forEach(entry => {
+      entry.stream.setState({ playing: false, time: 0 });
       entry.stream.socket.close();
+      entry.status = "closed";
     });
-
-  openedStreams = openedStreams.filter(entry => entry.id !== tabId);
 });
 
 // @ts-ignore
@@ -165,34 +182,39 @@ chrome.runtime.onMessage.addListener(
     switch (action) {
       case "info": {
         console.log("Setting info", payload);
-        const { stream } = getStreamEntry(sender.tab.id, service);
+        const info = {
+          title: getDefaultTitleForService(service),
+          backdrop: {
+            uri: "https://static.subreader.dk/placeholder-placeholder.jpg"
+          },
+          cover: {
+            uri: "https://static.subreader.dk/placeholder-cover.jpg"
+          },
+          ...payload
+        };
+        const { stream } = getStreamEntry(sender.tab.id, service, { info });
         if (stream) {
-          stream.setInfo({
-            title: getDefaultTitleForService(service),
-            backdrop: {
-              uri: "https://static.subreader.dk/placeholder-placeholder.jpg"
-            },
-            cover: {
-              uri: "https://static.subreader.dk/placeholder-cover.jpg"
-            },
-            ...payload
-          });
+          stream.setInfo(info);
         }
         break;
       }
       case "subtitles": {
         console.log("Setting subtitles", payload);
-        const { stream } = getStreamEntry(sender.tab.id, service);
+        const subtitles = payload;
+        const { stream } = getStreamEntry(sender.tab.id, service, {
+          subtitles
+        });
         if (stream) {
-          stream.setSubtitles(payload);
+          stream.setSubtitles(subtitles);
         }
         break;
       }
       case "state": {
         console.log("Setting state", payload);
-        const { stream } = getStreamEntry(sender.tab.id, service);
+        const state = payload;
+        const { stream } = getStreamEntry(sender.tab.id, service, { state });
         if (stream) {
-          stream.setState(payload);
+          stream.setState(state);
         }
         break;
       }

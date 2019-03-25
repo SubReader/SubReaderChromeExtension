@@ -28,6 +28,10 @@
       "js": ["viaplay.js"]
     },
     {
+      "matches": ["*://*.filmcentralen.dk/*", "*://filmcentralen.dk/*"],
+      "js": ["filmcentralen.js"]
+    },
+    {
       "matches": ["*://*.hval.dk/mitcfu/*", "*://hval.dk/mitcfu/*"],
       "js": ["mitcfu.js"]
     }

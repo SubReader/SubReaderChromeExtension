@@ -5,18 +5,16 @@ import { useFormState } from "react-use-form-state";
 import gql from "graphql-tag";
 
 import LoadingIndicator from "./LoadingIndicator";
-import SubmitInput from "./SubmitInput";
 import TextInput from "./TextInput";
+import SubmitInput from "./SubmitInput";
 
-const PasswordLoginContainer = styled.div`
+const CodeLoginContainer = styled.div`
   display: flex;
   flex: 1;
   justify-content: center;
   align-items: center;
   position: relative;
 `;
-
-const InputGroup = styled.div``;
 
 const AUTHENTICATION_FRAGMENT = gql`
   fragment AuthenticationFragment on AuthenticationResult {
@@ -34,8 +32,8 @@ const AUTHENTICATION_FRAGMENT = gql`
 `;
 
 export const AUTHENTICATE = gql`
-  mutation Authenticate($email: String!, $password: String!) {
-    authenticate(email: $email, password: $password) {
+  mutation Authenticate($loginCode: String!) {
+    authResult: authenticateWithLoginCode(loginCode: $loginCode) {
       ...AuthenticationFragment
     }
   }
@@ -43,31 +41,27 @@ export const AUTHENTICATE = gql`
 `;
 
 export default function PasswordLogin({ onLogin }) {
-  const [
-    formState,
-    { email: emailField, password: passwordField }
-  ] = useFormState();
-  const valid = formState.validity["email"] && formState.validity["password"];
+  const [formState, { text: textField }] = useFormState();
+  const valid = formState.validity["code"];
 
   return (
     <Mutation
       mutation={AUTHENTICATE}
-      onCompleted={({ authenticate }) => {
-        onLogin(authenticate);
+      onCompleted={({ authResult }) => {
+        onLogin(authResult);
       }}
     >
       {(authenticate, { loading, error }) => (
-        <PasswordLoginContainer>
+        <CodeLoginContainer>
           <form
             onSubmit={e => {
               e.preventDefault();
               if (valid) {
-                const { email, password } = formState.values;
-                passwordField("password").onChange({ target: { value: "" } });
+                const { code } = formState.values;
+                textField("code").onChange({ target: { value: "" } });
                 authenticate({
                   variables: {
-                    email,
-                    password
+                    loginCode: code
                   }
                 });
               }
@@ -82,16 +76,10 @@ export default function PasswordLogin({ onLogin }) {
                 ))}
               </ul>
             ) : null}
-            <InputGroup>
-              <TextInput {...emailField("email")} placeholder="Email" />
-              <TextInput
-                {...passwordField("password")}
-                placeholder="Adgangskode"
-              />
-            </InputGroup>
+            <TextInput {...textField("code")} placeholder="Log ind kode" />
             <SubmitInput type="submit" value="Log ind" />
           </form>
-        </PasswordLoginContainer>
+        </CodeLoginContainer>
       )}
     </Mutation>
   );

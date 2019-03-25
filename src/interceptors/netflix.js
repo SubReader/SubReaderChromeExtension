@@ -60,7 +60,7 @@
       if (url.indexOf("nflxvideo.net/?o") !== -1) {
         this.addEventListener("load", () => {
           handleSubtitle(this.response, "ttml");
-          setTimeout(() => sendTitle(), 2000);
+          sendTitle();
         });
       }
     }

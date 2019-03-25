@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import QRCodeLogin from "./QRCodeLogin";
 import PasswordLogin from "./PasswordLogin";
+import CodeLogin from "./CodeLogin";
 
 const LoginWrapper = styled.div`
   display: flex;
@@ -42,16 +43,16 @@ export default function Login({ onLogin }) {
           <PasswordLogin onLogin={onLogin} />
         ) : loginType == "qr-code" ? (
           <QRCodeLogin onLogin={onLogin} />
+        ) : loginType == "code" ? (
+          <CodeLogin onLogin={onLogin} />
         ) : null}
       </LoginContainer>
       <LoginTypeToggleButton
         onClick={() => {
-          setLoginType(loginType == "password" ? "qr-code" : "password");
+          setLoginType(loginType == "code" ? "qr-code" : "code");
         }}
       >
-        {loginType == "password"
-          ? "Log ind med QR kode"
-          : "Log ind med email og adgangskode"}
+        {loginType == "password" ? "Log ind med QR kode" : "Log ind med kode"}
       </LoginTypeToggleButton>
     </LoginWrapper>
   );
