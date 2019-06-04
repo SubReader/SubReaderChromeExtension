@@ -23,10 +23,21 @@ window.addEventListener("state", ({ detail: state }) => {
 window.addEventListener("vtt-subtitles", ({ detail: vttSubtitles }) => {
   // Test
   const subtitles = vttSubtitles
-    .map(({ language, vtt }) => ({
-      language,
-      ...webvtt.parse(vtt)
-    }))
+    .map(({ language, vtt }) => {
+      try {
+        const sub = webvtt.parse(vtt);
+        return {
+          language,
+          ...sub,
+          valid: true
+        };
+      } catch (error) {
+        console.error(error);
+        return {
+          valid: false
+        };
+      }
+    })
     .filter(s => s.valid)
     .map(s => ({
       language: s.language,
