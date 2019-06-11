@@ -32,7 +32,7 @@
       "js": ["filmcentralen.js"]
     },
     {
-      "matches": ["*://*.hval.dk/mitcfu/*", "*://hval.dk/mitcfu/*"],
+      "matches": ["*://*.hval.dk/mitcfu/*", "*://hval.dk/mitcfu/*", "*://*.hval.dk/mitCFU/*", "*://hval.dk/mitCFU/*"],
       "js": ["mitcfu.js"]
     }
   ],
