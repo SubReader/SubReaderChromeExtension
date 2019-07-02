@@ -3,6 +3,7 @@ import styled from "styled-components";
 import QRCodeLogin from "./QRCodeLogin";
 import PasswordLogin from "./PasswordLogin";
 import CodeLogin from "./CodeLogin";
+import Button from "./Button";
 
 const LoginWrapper = styled.div`
   display: flex;
@@ -16,22 +17,7 @@ const LoginContainer = styled.div`
   padding: 10px 20px;
 `;
 
-const LoginTypeToggleButton = styled.button`
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: transparent;
-  text-align: center;
-  color: black;
-  border: none;
-  outline: none;
-  opacity: 0.2;
-  transition: opacity 200ms;
-  cursor: pointer;
-  &:hover {
-    opacity: 1;
-  }
-`;
+const LoginTypeToggleButton = styled(Button)``;
 
 export default function Login({ onLogin }) {
   const [loginType, setLoginType] = useState("qr-code");

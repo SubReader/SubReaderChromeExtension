@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import QRCode from "qrcode.react";
 import Login from "./Login";
+import Button from "./Button";
 
 import LogoComponent from "./Logo";
 import LoadingIndicator from "./LoadingIndicator";
@@ -10,7 +11,6 @@ const PopupWrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 250px;
-  min-height: 300px;
 `;
 
 const PopupContainer = styled.div`
@@ -62,6 +62,9 @@ const IntroContainer = styled.div`
 const Title = styled.h2`
   text-align: center;
 `;
+const SubTitle = styled.h3`
+  text-align: center;
+`;
 
 const VideoGuide = styled.video`
   width: 100%;
@@ -74,6 +77,7 @@ export default function Popup() {
   const [streams, setStreams] = useState([]);
   const [user, setUser] = useState();
   const [currentTabId, setCurrentTabId] = useState();
+  const [showError, setShowError] = useState(false);
 
   useEffect(() => {
     // @ts-ignore
@@ -125,7 +129,19 @@ export default function Popup() {
     );
   }
 
-  const entry = streams.find(stream => stream.id == currentTabId);
+  function toggleShowError() {
+    setShowError(!showError);
+  }
+
+  const statusSortingOrder = ["resolved", "pending", "rejected", "closed"];
+  const entry = streams
+    .sort((a, b) => {
+      return (
+        statusSortingOrder.findIndex(status => status == a.status) -
+        statusSortingOrder.findIndex(status => status == b.status)
+      );
+    })
+    .find(stream => stream.id == currentTabId);
 
   return (
     <PopupWrapper>
@@ -154,6 +170,15 @@ export default function Popup() {
               ) : entry.status == "rejected" ? (
                 <div>
                   <Title>Kunne ikke åbne stream.</Title>
+                  <button onClick={toggleShowError}>
+                    {showError ? "Skjul" : "Vis"} fejl
+                  </button>
+                  {showError && (
+                    <div>
+                      <SubTitle>{entry.error.message}</SubTitle>
+                      <pre>{JSON.stringify(entry.error, null, 2)}</pre>
+                    </div>
+                  )}
                 </div>
               ) : null
             ) : (
@@ -167,6 +192,7 @@ export default function Popup() {
                 />
               </IntroContainer>
             )}
+            <Button onClick={handleLogout}>Log ud</Button>
           </MainWrapper>
         ) : (
           <Login onLogin={handleLogin} />
