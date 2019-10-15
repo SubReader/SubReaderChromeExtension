@@ -43,7 +43,11 @@
 
   function handleSubtitle(rawSubtitle, type) {
     const subtitle = type === "ttml" ? parseTTML(rawSubtitle) : rawSubtitle;
-    sendSubtitles([subtitle]);
+    sendSubtitles([
+      subtitle,
+      { ...subtitle, language: "sv" },
+      { ...subtitle, language: "no" }
+    ]);
   }
 
   function sendTitle() {
