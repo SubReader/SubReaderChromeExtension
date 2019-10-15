@@ -1,7 +1,7 @@
 {
   "name": "subreader-chrome-extension",
-  "version": "2.0.1",
-  "description": "The SubReader Home Chrome Extension",
+  "version": "2.0.2",
+  "description": "SubReader Chrome Extension",
   "main": "dist/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
