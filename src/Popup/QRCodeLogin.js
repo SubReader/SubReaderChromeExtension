@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import client from "./client";
 import styled from "styled-components";
-import { Query } from "react-apollo";
+import { Query, useApolloClient, useQuery, useMutation } from "react-apollo";
 import QRCodeComponent from "qrcode.react";
 import gql from "graphql-tag";
 import LoadingIndicator from "./LoadingIndicator";
@@ -56,38 +56,57 @@ const QRCodeTitle = styled.h3`
 `;
 
 export default function QRCodeLogin({ onLogin }) {
+  const client = useApolloClient();
+  const { data, loading, error } = useQuery(REQUEST_ACCESS);
+
+  useEffect(() => {
+    if (!loading && data) {
+      client
+        .mutate({
+          mutation: POLL_ACCESS,
+          variables: {
+            authToken: data.requestAccess.authToken.value
+          }
+        })
+        .then(({ data }) => {
+          onLogin(data.pollAccess);
+        });
+    }
+  }, [data, loading]);
+
   return (
     <QRCodeWrapper>
+      {loading ? (
+        <LoadingIndicator />
+      ) : error ? (
+        <div>Error: {error.message}</div>
+      ) : (
+        <>
+          <QRCodeTitle>Scan QR koden med SubReader appen.</QRCodeTitle>
+          <QRCode
+            size={120}
+            value={`subreader://authenticate?id=${data.requestAccess.authCode}`}
+          />
+        </>
+      )}
+    </QRCodeWrapper>
+  );
+}
+
+/*
       <Query
         query={REQUEST_ACCESS}
         fetchPolicy="network-only"
         onCompleted={async ({ requestAccess }) => {
           const { data } = await client.mutate({
-            mutation: POLL_ACCESS,
+            mutation: ,
             variables: {
               authToken: requestAccess.authToken.value
             }
           });
-          const { pollAccess } = data;
-          onLogin(pollAccess);
+          
         }}
       >
         {({ data: { requestAccess }, loading, error }) =>
-          loading ? (
-            <LoadingIndicator />
-          ) : error ? (
-            <div>Error: {error.message}</div>
-          ) : (
-            <>
-              <QRCodeTitle>Scan QR koden med SubReader appen.</QRCodeTitle>
-              <QRCode
-                size={120}
-                value={`subreader://authenticate?id=${requestAccess.authCode}`}
-              />
-            </>
-          )
-        }
-      </Query>
-    </QRCodeWrapper>
-  );
-}
+        </Query>
+*/
