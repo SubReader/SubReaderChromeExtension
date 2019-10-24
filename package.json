@@ -1,6 +1,6 @@
 {
   "name": "subreader-chrome-extension",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "SubReader Chrome Extension",
   "main": "dist/main.js",
   "scripts": {
