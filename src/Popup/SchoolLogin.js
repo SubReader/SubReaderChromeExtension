@@ -8,16 +8,13 @@ const SchoolLoginButton = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  opacity: 0.5;
   transition: opacity linear 200ms;
   cursor: pointer;
+  border: 1px solid #ddd;
+  padding: 5px;
 
   &:hover {
-    opacity: 0.9;
-  }
-
-  &:active {
-    opacity: 1;
+    border-color: #aaa;
   }
 `;
 
@@ -50,9 +47,30 @@ const AUTHENTICATE_WITH_MVIDSIGON_MUTATION = gql`
   }
 `;
 
+const REGISTER_WITH_MVIDSIGON_MUTATION = gql`
+  mutation RegisterWithMVIDSignOn($sessionID: String!) {
+    registerWithMVIDSignOn(sessionID: $sessionID) {
+      user {
+        name
+      }
+      accessToken {
+        value
+        expiresIn
+      }
+      refreshToken {
+        value
+      }
+    }
+  }
+`;
+
 export default function SchoolLogin({ onLogin }) {
   const [authenticateWithMVIDSignOn] = useMutation(
     AUTHENTICATE_WITH_MVIDSIGON_MUTATION
+  );
+
+  const [registerWithMVIDSignOn] = useMutation(
+    REGISTER_WITH_MVIDSIGON_MUTATION
   );
 
   return (
@@ -66,12 +84,27 @@ export default function SchoolLogin({ onLogin }) {
           },
           async returnURL => {
             const { SessionID } = parseQueryParams(returnURL);
-            const res = await authenticateWithMVIDSignOn({
-              variables: {
-                sessionID: SessionID
+
+            try {
+              const res = await registerWithMVIDSignOn({
+                variables: {
+                  sessionID: SessionID
+                }
+              });
+              onLogin(res.data.registerWithMVIDSignOn);
+            } catch (registrationError) {
+              try {
+                const res = await authenticateWithMVIDSignOn({
+                  variables: {
+                    sessionID: SessionID
+                  }
+                });
+                onLogin(res.data.authenticateWithMVIDSignOn);
+              } catch (authenticationError) {
+                console.error(registrationError);
+                console.error(authenticationError);
               }
-            });
-            onLogin(res.data.authenticateWithMVIDSignOn);
+            }
           }
         );
       }}

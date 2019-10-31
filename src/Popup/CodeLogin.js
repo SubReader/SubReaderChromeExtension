@@ -8,13 +8,7 @@ import LoadingIndicator from "./LoadingIndicator";
 import TextInput from "./TextInput";
 import SubmitInput from "./SubmitInput";
 
-const CodeLoginContainer = styled.div`
-  display: flex;
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-`;
+const CodeLoginContainer = styled.div``;
 
 const AUTHENTICATION_FRAGMENT = gql`
   fragment AuthenticationFragment on AuthenticationResult {
@@ -52,7 +46,7 @@ export default function PasswordLogin({ onLogin }) {
       }}
     >
       {(authenticate, { loading, error }) => (
-        <CodeLoginContainer>
+        <>
           <form
             onSubmit={e => {
               e.preventDefault();
@@ -79,7 +73,7 @@ export default function PasswordLogin({ onLogin }) {
             <TextInput {...textField("code")} placeholder="Log ind kode" />
             <SubmitInput type="submit" value="Log ind" />
           </form>
-        </CodeLoginContainer>
+        </>
       )}
     </Mutation>
   );
