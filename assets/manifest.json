@@ -35,6 +35,10 @@
     {
       "matches": ["*://*.hval.dk/mitcfu/*", "*://hval.dk/mitcfu/*", "*://*.hval.dk/mitCFU/*", "*://hval.dk/mitCFU/*"],
       "js": ["mitcfu.js"]
+    },
+    {
+      "matches": ["*://*.urplay.se/*", "*://urplay.se/*"],
+      "js": ["ur.js"]
     }
   ],
   "browser_action": {

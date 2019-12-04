@@ -10,6 +10,7 @@ module.exports = {
     filmcentralen: "./filmcentralen",
     mitcfu: "./mitcfu",
     drtv: "./drtv",
+    ur: "./ur",
     popup: "./Popup"
   },
   mode: "production",
