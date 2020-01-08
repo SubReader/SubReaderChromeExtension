@@ -3,11 +3,11 @@ const { activateHTML5 } = require("./html5");
 const fetch = require("isomorphic-fetch");
 const { parse } = require("node-webvtt");
 
-const code = require("raw-loader!babel-loader!./interceptors/ur");
+const code = require("raw-loader!babel-loader!./interceptors/urplay");
 const script = document.createElement("script");
 script.textContent = code;
 
-const service = "ur";
+const service = "urplay";
 
 activateHTML5({ service });
 

@@ -5,8 +5,7 @@ function activateHTML5({ service }) {
   let found = false;
 
   new MutationObserver(() => {
-    const video =
-      document.querySelector("video[src]") || document.querySelector("video");
+    const video = document.querySelector("video[src]");
     if (!video && found) {
       found = false;
       chrome.runtime.sendMessage({
@@ -20,6 +19,7 @@ function activateHTML5({ service }) {
     }
 
     if (video && !found) {
+      console.log("Found video", video);
       found = true;
       const onTime = _.throttle(() => {
         chrome.runtime.sendMessage({
