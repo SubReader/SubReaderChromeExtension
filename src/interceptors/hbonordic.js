@@ -16,8 +16,8 @@
       .split(/\:|\./)
       .map(x => parseInt(x));
     return (
-      ((hours * 60 + minutes) * 60 + seconds) * 1000 +
-      (containsDot ? rest : rest * 10)
+      ((hours * 60 + minutes) * 60 + seconds) * 1000
+      + (containsDot ? rest : rest * 10)
     );
   }
 
@@ -32,7 +32,7 @@
         return {
           timeIn: parseTimestamp(el.attributes.begin.value),
           timeOut: parseTimestamp(el.attributes.end.value),
-          text: textEl.innerText
+          text: textEl.innerText,
         };
       });
     return cues;
@@ -41,8 +41,8 @@
   function dispatch(event, obj) {
     window.dispatchEvent(
       new CustomEvent(event, {
-        detail: obj
-      })
+        detail: obj,
+      }),
     );
   }
 
@@ -53,8 +53,8 @@
         clearInterval(loop);
       }
       try {
-        const player = window["videojs"](
-          document.getElementsByClassName("video-js")[0]
+        const player = window.videojs(
+          document.getElementsByClassName("video-js")[0],
         );
 
         clearInterval(loop);
@@ -62,7 +62,7 @@
         function handlePlayState() {
           dispatch("state", {
             playing: !player.paused(),
-            time: Math.floor(player.currentTime() * 1000)
+            time: Math.floor(player.currentTime() * 1000),
           });
         }
 
@@ -78,14 +78,14 @@
             .then(cues => {
               return {
                 language: track.language,
-                cues
+                cues,
               };
             });
         });
 
         Promise.all(subtitles).then(subtitles => {
           dispatch("info", {
-            title: "HBO Nordic"
+            title: "HBO Nordic",
           });
           dispatch("subtitles", subtitles);
         });

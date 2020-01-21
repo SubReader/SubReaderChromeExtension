@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
+
 const SchoolLoginButton = styled.div`
   display: flex;
   flex-direction: row;
@@ -23,7 +24,7 @@ function parseQueryParams(url) {
   const params = queryParams.split("&").reduce((acc, kvPair) => {
     const [k, v] = kvPair.split("=");
     return Object.assign({}, acc, {
-      [k]: v
+      [k]: v,
     });
   }, {});
 
@@ -66,11 +67,11 @@ const REGISTER_WITH_MVIDSIGON_MUTATION = gql`
 
 export default function SchoolLogin({ onLogin }) {
   const [authenticateWithMVIDSignOn] = useMutation(
-    AUTHENTICATE_WITH_MVIDSIGON_MUTATION
+    AUTHENTICATE_WITH_MVIDSIGON_MUTATION,
   );
 
   const [registerWithMVIDSignOn] = useMutation(
-    REGISTER_WITH_MVIDSIGON_MUTATION
+    REGISTER_WITH_MVIDSIGON_MUTATION,
   );
 
   return (
@@ -80,7 +81,7 @@ export default function SchoolLogin({ onLogin }) {
           {
             url: `https://signon.vitec-mv.com/?returnUrl=${chrome.identity.getRedirectURL()}`,
 
-            interactive: true
+            interactive: true,
           },
           async returnURL => {
             const { SessionID } = parseQueryParams(returnURL);
@@ -88,16 +89,16 @@ export default function SchoolLogin({ onLogin }) {
             try {
               const res = await registerWithMVIDSignOn({
                 variables: {
-                  sessionID: SessionID
-                }
+                  sessionID: SessionID,
+                },
               });
               onLogin(res.data.registerWithMVIDSignOn);
             } catch (registrationError) {
               try {
                 const res = await authenticateWithMVIDSignOn({
                   variables: {
-                    sessionID: SessionID
-                  }
+                    sessionID: SessionID,
+                  },
                 });
                 onLogin(res.data.authenticateWithMVIDSignOn);
               } catch (authenticationError) {
@@ -105,7 +106,7 @@ export default function SchoolLogin({ onLogin }) {
                 console.error(authenticationError);
               }
             }
-          }
+          },
         );
       }}
     >

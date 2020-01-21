@@ -8,6 +8,7 @@ import LoadingIndicator from "./LoadingIndicator";
 import SubmitInput from "./SubmitInput";
 import TextInput from "./TextInput";
 
+
 const PasswordLoginContainer = styled.div`
   display: flex;
   flex: 1;
@@ -45,9 +46,9 @@ export const AUTHENTICATE = gql`
 export default function PasswordLogin({ onLogin }) {
   const [
     formState,
-    { email: emailField, password: passwordField }
+    { email: emailField, password: passwordField },
   ] = useFormState();
-  const valid = formState.validity["email"] && formState.validity["password"];
+  const valid = formState.validity.email && formState.validity.password;
 
   return (
     <Mutation
@@ -67,8 +68,8 @@ export default function PasswordLogin({ onLogin }) {
                 authenticate({
                   variables: {
                     email,
-                    password
-                  }
+                    password,
+                  },
                 });
               }
             }}
@@ -77,8 +78,8 @@ export default function PasswordLogin({ onLogin }) {
               <LoadingIndicator />
             ) : error ? (
               <ul>
-                {error.graphQLErrors.map(error => (
-                  <li>{error.message}</li>
+                {error.graphQLErrors.map((error, i) => (
+                  <li key={i}>{error.message}</li>
                 ))}
               </ul>
             ) : null}

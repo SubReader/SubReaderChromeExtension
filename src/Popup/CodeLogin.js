@@ -8,6 +8,7 @@ import LoadingIndicator from "./LoadingIndicator";
 import TextInput from "./TextInput";
 import SubmitInput from "./SubmitInput";
 
+
 const CodeLoginContainer = styled.div``;
 
 const AUTHENTICATION_FRAGMENT = gql`
@@ -36,7 +37,7 @@ export const AUTHENTICATE = gql`
 
 export default function PasswordLogin({ onLogin }) {
   const [formState, { text: textField }] = useFormState();
-  const valid = formState.validity["code"];
+  const valid = formState.validity.code;
 
   return (
     <Mutation
@@ -55,8 +56,8 @@ export default function PasswordLogin({ onLogin }) {
                 textField("code").onChange({ target: { value: "" } });
                 authenticate({
                   variables: {
-                    loginCode: code
-                  }
+                    loginCode: code,
+                  },
                 });
               }
             }}

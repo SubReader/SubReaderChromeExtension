@@ -12,20 +12,20 @@
               cues.push({
                 text: div.innerText,
                 timeIn: Math.floor(cue.startTime * 1000),
-                timeOut: Math.floor(cue.endTime * 1000)
+                timeOut: Math.floor(cue.endTime * 1000),
               });
             }
             track.oncuechange = null;
             track.removeEventListener("loadeddata", handleCues);
             resolve({
               language: track.language,
-              cues
+              cues,
             });
           }
           track.oncuechange = handleCues;
           track.addEventListener("loadeddata", handleCues);
         });
-      })
+      }),
     );
   }
 
@@ -33,12 +33,15 @@
     constructor() {
       this.code = 0;
     }
+
     lock() {
       return ++this.code;
     }
+
     getCode() {
       return this.code;
     }
+
     unlock() {
       this.code = 0;
     }
@@ -50,7 +53,7 @@
     const videoEl = document.getElementById("core-video-element");
     if (videoEl) {
       found = true;
-      const video = window["videojs"](videoEl);
+      const video = window.videojs(videoEl);
       const title = document.getElementById("player-title").textContent;
       const textTracks = video.textTracks();
 
@@ -60,13 +63,13 @@
           detail: {
             title: title,
             cover: {
-              uri: poster
+              uri: poster,
             },
             backdrop: {
-              uri: poster
-            }
-          }
-        })
+              uri: poster,
+            },
+          },
+        }),
       );
 
       const lock = new CodeLock();
@@ -83,8 +86,8 @@
             lock.unlock();
             window.dispatchEvent(
               new CustomEvent("subtitles", {
-                detail: subtitles
-              })
+                detail: subtitles,
+              }),
             );
           }
         });
@@ -96,6 +99,6 @@
   });
   observer.observe(document, {
     subtree: true,
-    childList: true
+    childList: true,
   });
 })();

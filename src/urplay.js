@@ -4,6 +4,8 @@ const fetch = require("isomorphic-fetch");
 const { parse } = require("node-webvtt");
 
 const code = require("raw-loader!babel-loader!./interceptors/urplay");
+
+
 const script = document.createElement("script");
 script.textContent = code;
 
@@ -15,7 +17,7 @@ function sendMessage({ action, payload }) {
   chrome.runtime.sendMessage({
     action,
     payload,
-    service
+    service,
   });
 }
 
@@ -32,12 +34,12 @@ window.addEventListener("vtt-tracks", ({ detail: tracks }) => {
               return {
                 text: cue.text,
                 timeIn: (cue.start * 1000) | 0,
-                timeOut: (cue.end * 1000) | 0
+                timeOut: (cue.end * 1000) | 0,
               };
-            })
+            }),
           };
         });
-    })
+    }),
   ).then(subtitles => {
     console.log(subtitles);
     sendMessage({ action: "subtitles", payload: subtitles });

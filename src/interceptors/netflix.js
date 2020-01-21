@@ -21,12 +21,12 @@
         return {
           timeIn: Math.floor(parseInt(el.attributes.begin.value) / 10000),
           timeOut: Math.floor(parseInt(el.attributes.end.value) / 10000),
-          text: textEl.innerText
+          text: textEl.innerText,
         };
       });
     const subtitle = {
       language: getLanguage(),
-      cues
+      cues,
     };
     return subtitle;
   }
@@ -46,7 +46,7 @@
     sendSubtitles([
       subtitle,
       { ...subtitle, language: "sv" },
-      { ...subtitle, language: "no" }
+      { ...subtitle, language: "no" },
     ]);
   }
 
@@ -54,7 +54,7 @@
     const title = document.querySelector(".video-title");
     sendInfo({
       // @ts-ignore
-      title: title ? title.innerText.trim() : "Netflix"
+      title: title ? title.innerText.trim() : "Netflix",
     });
   }
 
@@ -67,6 +67,6 @@
           sendTitle();
         });
       }
-    }
+    },
   );
 })();

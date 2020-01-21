@@ -6,15 +6,16 @@ const {
   distinct,
   retryWhen,
   delay,
-  take
+  take,
 } = require("rxjs/operators");
 
 const ApolloClient = require("apollo-boost").default;
 const gql = require("graphql-tag").default;
 
+
 const client = new ApolloClient({
   uri: "https://api.subreader.dk",
-  fetch
+  fetch,
 });
 
 function get$(name, transform) {
@@ -66,19 +67,19 @@ const validAccessToken$ = accessToken$.pipe(
           }
         `,
         variables: {
-          refreshToken
-        }
+          refreshToken,
+        },
       });
       const {
-        refreshAccessToken: { accessToken }
+        refreshAccessToken: { accessToken },
       } = data;
 
       // @ts-ignore
       chrome.storage.sync.set({
         accessToken: accessToken.value,
         expirationDate: new Date(
-          Date.now() + accessToken.expiresIn
-        ).toISOString()
+          Date.now() + accessToken.expiresIn,
+        ).toISOString(),
       });
 
       return accessToken.value;
@@ -87,15 +88,15 @@ const validAccessToken$ = accessToken$.pipe(
   retryWhen(errors => {
     return errors.pipe(
       delay(1000),
-      take(10)
+      take(10),
     );
   }),
-  distinct()
+  distinct(),
 );
 
 module.exports = {
   accessToken$,
   expirationDate$,
   refreshToken$,
-  validAccessToken$
+  validAccessToken$,
 };

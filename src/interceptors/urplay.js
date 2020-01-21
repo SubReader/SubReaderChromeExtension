@@ -1,6 +1,6 @@
 (function() {
   const LANGUAGE_MAP = {
-    svenska: "sv"
+    svenska: "sv",
   };
 
   function sendInfo(info) {
@@ -19,15 +19,15 @@
     const vttTracks = tracks
       .filter(track => {
         return (
-          track.label &&
-          Object.keys(LANGUAGE_MAP).includes(track.label.toLowerCase())
+          track.label
+          && Object.keys(LANGUAGE_MAP).includes(track.label.toLowerCase())
         );
       })
       .map(track => {
         const language = LANGUAGE_MAP[track.label.toLowerCase()];
         return {
           language,
-          url: track.file
+          url: track.file,
         };
       });
 

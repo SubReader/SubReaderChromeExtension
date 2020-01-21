@@ -21,25 +21,25 @@
     const subtitles = Drupal.settings.fc_subtitles.map(({ code }) => {
       const language = code.toLowerCase();
       return fetch(
-        `https://filmcentralen.dk/subtitles/${language}/${id}.vtt`
+        `https://filmcentralen.dk/subtitles/${language}/${id}.vtt`,
       ).then(vtt => ({
         language,
-        vtt
+        vtt,
       }));
     });
 
     Promise.all(subtitles).then(subtitles => {
       window.dispatchEvent(
-        new CustomEvent("vtt-subtitles", { detail: subtitles })
+        new CustomEvent("vtt-subtitles", { detail: subtitles }),
       );
     });
 
     window.dispatchEvent(
       new CustomEvent("info", {
         detail: {
-          title
-        }
-      })
+          title,
+        },
+      }),
     );
   } catch (error) {
     console.error(error);

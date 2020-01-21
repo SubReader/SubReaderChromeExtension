@@ -1,5 +1,7 @@
 const { activateHTML5 } = require("./html5");
 const code = require("raw-loader!babel-loader!./interceptors/netflix");
+
+
 const script = document.createElement("script");
 script.textContent = code;
 document.body.appendChild(script);
@@ -12,7 +14,7 @@ function sendMessage({ action, payload }) {
   chrome.runtime.sendMessage({
     action,
     payload,
-    service
+    service,
   });
 }
 

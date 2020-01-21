@@ -1,7 +1,11 @@
 const code = require("raw-loader!babel-loader!./interceptors/filmcentralen");
 const webvtt = require("node-webvtt");
+
+
 const script = document.createElement("script");
 const { activateHTML5 } = require("./html5");
+
+
 script.textContent = code;
 
 const service = "filmcentralen";
@@ -11,7 +15,7 @@ function sendMessage({ action, payload }) {
   chrome.runtime.sendMessage({
     action,
     payload,
-    service
+    service,
   });
 }
 
@@ -28,12 +32,12 @@ window.addEventListener("vtt-subtitles", ({ detail: vttSubtitles }) => {
         return {
           language,
           ...sub,
-          valid: true
+          valid: true,
         };
       } catch (error) {
         console.error(error);
         return {
-          valid: false
+          valid: false,
         };
       }
     })
@@ -43,8 +47,8 @@ window.addEventListener("vtt-subtitles", ({ detail: vttSubtitles }) => {
       cues: s.cues.map(cue => ({
         text: cue.text,
         timeIn: cue.start * 1000,
-        timeOut: cue.end * 1000
-      }))
+        timeOut: cue.end * 1000,
+      })),
     }));
   sendMessage({ action: "subtitles", payload: subtitles });
 });

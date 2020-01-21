@@ -1,5 +1,6 @@
 const _ = require("lodash");
 
+
 function activateHTML5({ service }) {
   let found = false;
 
@@ -12,8 +13,8 @@ function activateHTML5({ service }) {
         service,
         payload: {
           time: 0,
-          playing: false
-        }
+          playing: false,
+        },
       });
     }
 
@@ -26,8 +27,8 @@ function activateHTML5({ service }) {
           service,
           payload: {
             time: Math.floor(video.currentTime * 1000),
-            playing: !video.paused && !video.ended
-          }
+            playing: !video.paused && !video.ended,
+          },
         });
       }, 5000);
 
@@ -38,8 +39,8 @@ function activateHTML5({ service }) {
           service,
           payload: {
             time: Math.floor(video.currentTime * 1000),
-            playing: true
-          }
+            playing: true,
+          },
         });
       });
 
@@ -49,8 +50,8 @@ function activateHTML5({ service }) {
           service,
           payload: {
             time: Math.floor(video.currentTime * 1000),
-            playing: false
-          }
+            playing: false,
+          },
         });
       });
     }
@@ -58,5 +59,5 @@ function activateHTML5({ service }) {
 }
 
 module.exports = {
-  activateHTML5
+  activateHTML5,
 };

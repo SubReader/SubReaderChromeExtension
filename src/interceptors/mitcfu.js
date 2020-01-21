@@ -22,9 +22,9 @@
         timeIn: parseTime(entry.Time),
         timeOut: parseTime(entry.Time) + parseTime(entry.Duration),
         text:
-          entry.Line1 +
-          (entry.Line2 ? "\n " + entry.Line2 : "") +
-          (entry.Line3 ? "\n " + entry.Line3 : "")
+          entry.Line1
+          + (entry.Line2 ? "\n " + entry.Line2 : "")
+          + (entry.Line3 ? "\n " + entry.Line3 : ""),
       };
     });
   }
@@ -36,7 +36,7 @@
     window.dispatchEvent(new CustomEvent("subtitles", { detail: subtitles }));
   }
 
-  const GoBrain = window["GoBrain"];
+  const GoBrain = window.GoBrain;
   if (GoBrain) {
     const { data } = GoBrain.widgets().player.embedSettings;
     fetch(data)
@@ -47,18 +47,18 @@
         const { asset, metadata } = data;
 
         sendInfo({
-          title: metadata.description
+          title: metadata.description,
         });
 
         const subtitles = asset.resources
-          .filter(res => res.type == "subtitle")
+          .filter(res => res.type === "subtitle")
           .map(subtitle => {
             const links = [].concat.apply(
               [],
-              (subtitle.renditions || []).map(r => r.links)
+              (subtitle.renditions || []).map(r => r.links),
             );
             const jsonLinks = links.filter(
-              l => l.mimeType == "application/json"
+              l => l.mimeType === "application/json",
             );
 
             let language;
@@ -75,7 +75,7 @@
                 .then(data => {
                   return {
                     language,
-                    cues: json2cues(data)
+                    cues: json2cues(data),
                   };
                 });
             } else {

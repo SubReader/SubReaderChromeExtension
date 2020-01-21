@@ -1,5 +1,7 @@
 const { activateHTML5 } = require("./html5");
 const code = require("raw-loader!babel-loader!./interceptors/mitcfu");
+
+
 const script = document.createElement("script");
 script.textContent = code;
 
@@ -13,7 +15,7 @@ function sendMessage({ action, payload }) {
   chrome.runtime.sendMessage({
     action,
     payload,
-    service
+    service,
   });
 }
 

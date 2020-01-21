@@ -25,14 +25,14 @@
   function sendInfo(info) {
     window.dispatchEvent(
       new CustomEvent("info", {
-        detail: info
-      })
+        detail: info,
+      }),
     );
   }
 
   function sendSamiSubtitles(samiSubtitles) {
     window.dispatchEvent(
-      new CustomEvent("sami-subtitles", { detail: samiSubtitles })
+      new CustomEvent("sami-subtitles", { detail: samiSubtitles }),
     );
   }
 
@@ -41,15 +41,15 @@
     sendInfo({
       title: content.title,
       cover: {
-        uri: content.images.boxart.url
+        uri: content.images.boxart.url,
       },
       backdrop: {
-        uri: content.images.landscape.url
-      }
+        uri: content.images.landscape.url,
+      },
     });
 
     fetchJSON(
-      window["viaplay"].linkParser.expandApiLink(
+      window.viaplay.linkParser.expandApiLink(
         _links["viaplay:stream"].href,
         {
           deviceId: localStorage.getItem("deviceId"),
@@ -58,19 +58,19 @@
           deviceType: "pc",
           userAgent: "SubReader",
           availabilityContext: null,
-          hls_fmp4: null
-        }
-      )
+          hls_fmp4: null,
+        },
+      ),
     ).then(stream => {
       Promise.all(
         stream._links["viaplay:sami"].map(subtitle => {
           return fetch(subtitle.href, false).then(sami => {
             return {
               sami,
-              language: subtitle.languageCode
+              language: subtitle.languageCode,
             };
           });
-        })
+        }),
       ).then(sendSamiSubtitles);
     });
   }
@@ -89,6 +89,6 @@
           this.removeEventListener("load", handler);
         });
       }
-    }
+    },
   );
 })();

@@ -7,6 +7,7 @@ import Button from "./Button";
 import LogoComponent from "./Logo";
 import LoadingIndicator from "./LoadingIndicator";
 
+
 const PopupWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -45,10 +46,6 @@ const QRWrapper = styled.div`
 
 const QRContainer = styled.div`
   padding: 10px;
-`;
-
-const StreamsContainer = styled.div`
-  flex: 1;
 `;
 
 const IntroContainer = styled.div`
@@ -107,13 +104,13 @@ export default function Popup() {
         accessToken: accessToken.value,
         refreshToken: refreshToken.value,
         expirationDate: new Date(
-          Date.now() + accessToken.expiresIn * 1000
-        ).toISOString()
+          Date.now() + accessToken.expiresIn * 1000,
+        ).toISOString(),
       },
       () => {
         setUser(user);
         setLoading(false);
-      }
+      },
     );
   }
 
@@ -125,7 +122,7 @@ export default function Popup() {
       () => {
         setUser(null);
         setLoading(false);
-      }
+      },
     );
   }
 
@@ -137,11 +134,11 @@ export default function Popup() {
   const entry = streams
     .sort((a, b) => {
       return (
-        statusSortingOrder.findIndex(status => status == a.status) -
-        statusSortingOrder.findIndex(status => status == b.status)
+        statusSortingOrder.findIndex(status => status === a.status)
+        - statusSortingOrder.findIndex(status => status === b.status)
       );
     })
-    .find(stream => stream.id == currentTabId);
+    .find(stream => stream.id === currentTabId);
 
   return (
     <PopupWrapper>
@@ -154,9 +151,9 @@ export default function Popup() {
         ) : user ? (
           <MainWrapper>
             {entry ? (
-              entry.status == "pending" ? (
+              entry.status === "pending" ? (
                 <LoadingIndicator />
-              ) : entry.status == "resolved" ? (
+              ) : entry.status === "resolved" ? (
                 <QRWrapper>
                   <Title>Scan QR koden med SubReader appen</Title>
                   <QRContainer>
@@ -167,7 +164,7 @@ export default function Popup() {
                     />
                   </QRContainer>
                 </QRWrapper>
-              ) : entry.status == "rejected" ? (
+              ) : entry.status === "rejected" ? (
                 <div>
                   <Title>Kunne ikke åbne stream.</Title>
                   <button onClick={toggleShowError}>

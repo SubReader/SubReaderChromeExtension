@@ -1,4 +1,6 @@
 const code = require("raw-loader!babel-loader!./interceptors/hbonordic");
+
+
 const script = document.createElement("script");
 script.textContent = code;
 
@@ -6,7 +8,7 @@ function sendMessage({ action, payload }) {
   chrome.runtime.sendMessage({
     action,
     payload,
-    service: "hbonordic"
+    service: "hbonordic",
   });
 }
 

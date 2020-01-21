@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import client from "./client";
 import styled from "styled-components";
-import { Query, useApolloClient, useQuery, useMutation } from "react-apollo";
+import { useApolloClient, useQuery } from "react-apollo";
 import QRCodeComponent from "qrcode.react";
 import gql from "graphql-tag";
 import LoadingIndicator from "./LoadingIndicator";
+
 
 const QRCode = styled(QRCodeComponent)`
   display: block;
@@ -65,8 +65,8 @@ export default function QRCodeLogin({ onLogin }) {
         .mutate({
           mutation: POLL_ACCESS,
           variables: {
-            authToken: data.requestAccess.authToken.value
-          }
+            authToken: data.requestAccess.authToken.value,
+          },
         })
         .then(({ data }) => {
           onLogin(data.pollAccess);
@@ -77,7 +77,7 @@ export default function QRCodeLogin({ onLogin }) {
   return (
     <QRCodeWrapper>
       {loading ? (
-        <LoadingIndicator />
+        <LoadingIndicator/>
       ) : error ? (
         <div>Error: {error.message}</div>
       ) : (
@@ -104,7 +104,7 @@ export default function QRCodeLogin({ onLogin }) {
               authToken: requestAccess.authToken.value
             }
           });
-          
+
         }}
       >
         {({ data: { requestAccess }, loading, error }) =>

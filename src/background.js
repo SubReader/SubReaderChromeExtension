@@ -3,18 +3,19 @@ import {
   ApolloClient,
   ApolloLink,
   InMemoryCache,
-  HttpLink
+  HttpLink,
 } from "apollo-boost";
 import gql from "graphql-tag";
 import { observableFromPromise, getDefaultTitleForService } from "./utils";
+
 
 const httpLink = new HttpLink({ uri: "https://api.subreader.dk" });
 const authLink = new ApolloLink((operation, forward) => {
   return observableFromPromise(getAccessToken()).flatMap(accessToken => {
     operation.setContext({
       headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
     return forward(operation);
   });
@@ -23,11 +24,11 @@ const authLink = new ApolloLink((operation, forward) => {
 const cache = new InMemoryCache();
 const authorizedClient = new ApolloClient({
   link: authLink.concat(httpLink),
-  cache
+  cache,
 });
 const client = new ApolloClient({
   link: httpLink,
-  cache
+  cache,
 });
 
 function getAccessToken() {
@@ -50,8 +51,8 @@ function getAccessToken() {
                 }
               `,
               variables: {
-                refreshToken
-              }
+                refreshToken,
+              },
             });
             const { refreshAccessToken } = data;
             const { accessToken } = refreshAccessToken;
@@ -61,12 +62,12 @@ function getAccessToken() {
               {
                 accessToken: accessToken.value,
                 expirationDate: new Date(
-                  Date.now() + accessToken.expiresIn * 1000
-                ).toISOString()
+                  Date.now() + accessToken.expiresIn * 1000,
+                ).toISOString(),
               },
               () => {
                 resolve(accessToken.value);
-              }
+              },
             );
           } else {
             resolve(accessToken);
@@ -85,19 +86,19 @@ function getAccessToken() {
           // @ts-ignore
           chrome.storage.onChanged.addListener(handleAddAccessToken);
         }
-      }
+      },
     );
   });
 }
 
-let openedStreams = [];
+const openedStreams = [];
 
 function getStreamEntry(id, service, stream) {
   for (const entry of openedStreams) {
     if (
-      entry.id == id &&
-      entry.status == "resolved" &&
-      !entry.supportedServices.includes(service)
+      entry.id === id
+      && entry.status === "resolved"
+      && !entry.supportedServices.includes(service)
     ) {
       entry.stream.setState({ playing: false, time: 0 });
       entry.stream.socket.close();
@@ -107,9 +108,9 @@ function getStreamEntry(id, service, stream) {
 
   const entry = openedStreams.find(entry => {
     return (
-      entry.id == id &&
-      entry.supportedServices.includes(service) &&
-      (entry.status == "pending" || entry.status == "resolved")
+      entry.id === id
+      && entry.supportedServices.includes(service)
+      && (entry.status === "pending" || entry.status === "resolved")
     );
   });
 
@@ -118,7 +119,7 @@ function getStreamEntry(id, service, stream) {
   const newEntry = {
     id,
     supportedServices: [service],
-    status: "pending"
+    status: "pending",
   };
 
   openedStreams.push(newEntry);
@@ -140,15 +141,15 @@ function getStreamEntry(id, service, stream) {
       `,
       variables: {
         service,
-        stream
-      }
+        stream,
+      },
     })
     .then(({ data }) => {
       const { createUserStream } = data;
       const {
         stream: streamInfo,
         streamToken,
-        supportedServices
+        supportedServices,
       } = createUserStream;
       const stream = new SubReader.Stream(streamToken.value, streamInfo.id);
 
@@ -167,7 +168,7 @@ function getStreamEntry(id, service, stream) {
 // @ts-ignore
 chrome.tabs.onRemoved.addListener(tabId => {
   openedStreams
-    .filter(entry => entry.id == tabId && entry.status == "resolved")
+    .filter(entry => entry.id === tabId && entry.status === "resolved")
     .forEach(entry => {
       entry.stream.setState({ playing: false, time: 0 });
       entry.stream.socket.close();
@@ -185,12 +186,12 @@ chrome.runtime.onMessage.addListener(
         const info = {
           title: getDefaultTitleForService(service),
           backdrop: {
-            uri: "https://static.subreader.dk/placeholder-placeholder.jpg"
+            uri: "https://static.subreader.dk/placeholder-placeholder.jpg",
           },
           cover: {
-            uri: "https://static.subreader.dk/placeholder-cover.jpg"
+            uri: "https://static.subreader.dk/placeholder-cover.jpg",
           },
-          ...payload
+          ...payload,
         };
         const { stream } = getStreamEntry(sender.tab.id, service, { info });
         if (stream) {
@@ -202,7 +203,7 @@ chrome.runtime.onMessage.addListener(
         console.log("Setting subtitles", payload);
         const subtitles = payload;
         const { stream } = getStreamEntry(sender.tab.id, service, {
-          subtitles
+          subtitles,
         });
         if (stream) {
           stream.setSubtitles(subtitles);
@@ -229,13 +230,13 @@ chrome.runtime.onMessage.addListener(
             ...entry,
             stream: entry.stream
               ? {
-                  id: entry.stream.id
-                }
-              : null
-          }))
+                id: entry.stream.id,
+              }
+              : null,
+          })),
         });
       }
     }
     return true;
-  }
+  },
 );
