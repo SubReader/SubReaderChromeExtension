@@ -1,0 +1,12 @@
+{
+  "root": true,
+  "extends": [
+    "@trejgun/eslint-config/presets/jsx"
+  ],
+  "rules": {
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ]
+  }
+}

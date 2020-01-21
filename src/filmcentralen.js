@@ -1,4 +1,3 @@
-// @ts-nocheck
 const code = require("raw-loader!babel-loader!./interceptors/filmcentralen");
 const webvtt = require("node-webvtt");
 const script = document.createElement("script");

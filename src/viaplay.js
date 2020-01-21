@@ -1,4 +1,3 @@
-// @ts-nocheck
 const { activateHTML5 } = require("./html5");
 const fetch = require("isomorphic-fetch");
 const samiParser = require("sami-parser");

@@ -1,4 +1,3 @@
-// @ts-nocheck
 const code = require("raw-loader!babel-loader!./interceptors/hbonordic");
 const script = document.createElement("script");
 script.textContent = code;

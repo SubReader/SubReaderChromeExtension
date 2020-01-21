@@ -36,3 +36,4 @@ old
 dist
 *.pem
 .DS_Store
+.idea

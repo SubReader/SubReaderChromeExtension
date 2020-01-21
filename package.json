@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cp -r assets/* dist/ && webpack-cli",
-    "start": "npm run build -- -w"
+    "start": "npm run build -- -w",
+    "lint": "eslint . --fix",
+    "prettier": "prettier \"app/**/*.js\" --write"
   },
   "config": {
     "server": "https://api.subreader.dk"
@@ -26,7 +28,12 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
     "@babel/preset-env": "^7.6.3",
     "@babel/preset-react": "^7.6.3",
+    "@trejgun/eslint-config": "^0.0.2",
     "babel-loader": "^8.0.6",
+    "eslint": "^6.8.0",
+    "husky": "^4.0.10",
+    "lint-staged": "^10.0.0",
+    "prettier": "^1.19.1",
     "raw-loader": "^0.5.1",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.9"

@@ -1,4 +1,3 @@
-// @ts-nocheck
 const { activateHTML5 } = require("./html5");
 const code = require("raw-loader!babel-loader!./interceptors/mitcfu");
 const script = document.createElement("script");
