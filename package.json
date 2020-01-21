@@ -5,10 +5,10 @@
   "main": "dist/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "cp -r assets/* dist/ && webpack-cli",
+    "build": "webpack",
     "start": "npm run build -- -w",
     "lint": "eslint . --fix",
-    "prettier": "prettier \"app/**/*.js\" --write"
+    "prettier": "prettier \"src/**/*.js\" --write"
   },
   "config": {
     "server": "https://api.subreader.dk"
@@ -24,19 +24,21 @@
   },
   "homepage": "https://github.com/ande765a/SubReaderChromeExtension#readme",
   "devDependencies": {
-    "@babel/core": "^7.6.4",
-    "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
-    "@babel/preset-env": "^7.6.3",
-    "@babel/preset-react": "^7.6.3",
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/preset-react": "^7.8.3",
     "@trejgun/eslint-config": "^0.0.2",
     "babel-loader": "^8.0.6",
+    "babel-plugin-lodash": "^3.3.4",
+    "copy-webpack-plugin": "^5.1.1",
     "eslint": "^6.8.0",
     "husky": "^4.0.10",
     "lint-staged": "^10.0.0",
     "prettier": "^1.19.1",
+    "progress-bar-webpack-plugin": "^2.1.0",
     "raw-loader": "^0.5.1",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.9"
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
   },
   "dependencies": {
     "@apollo/react-hooks": "^3.1.3",

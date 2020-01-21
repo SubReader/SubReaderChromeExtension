@@ -1,56 +1,65 @@
-const path = require("path");
+const ProgressBarPlugin = require("progress-bar-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
+
 
 module.exports = {
-  context: path.join(__dirname, "src"),
   entry: {
-    background: "./background",
-    netflix: "./netflix",
-    hbonordic: "./hbonordic",
-    viaplay: "./viaplay",
-    filmcentralen: "./filmcentralen",
-    mitcfu: "./mitcfu",
-    drtv: "./drtv",
-    urplay: "./urplay",
-    popup: "./Popup"
+    background: "./src/background",
+    netflix: "./src/netflix",
+    hbonordic: "./src/hbonordic",
+    viaplay: "./src/viaplay",
+    filmcentralen: "./src/filmcentralen",
+    mitcfu: "./src/mitcfu",
+    drtv: "./src/drtv",
+    urplay: "./src/urplay",
+    popup: "./src/Popup",
   },
   mode: "production",
   node: {
-    fs: "empty"
+    fs: "empty",
   },
   output: {
-    path: path.join(__dirname, "dist"),
-    filename: "[name].js"
+    filename: "[name].js",
   },
   module: {
     rules: [
       {
-        test: /.js$/,
-        include: path.join(__dirname, "src"),
-        loader: "babel-loader",
-        options: {
-          presets: [
-            [
-              "@babel/preset-env",
-              {
-                targets: {
-                  browsers: ["last 5 Chrome versions"]
-                },
-                modules: false,
-                loose: true
-              }
-            ],
-            "@babel/preset-react"
-          ],
-          plugins: [
-            [
-              "@babel/plugin-proposal-object-rest-spread",
-              {
-                useBuiltIns: true
-              }
-            ]
-          ]
-        }
-      }
-    ]
-  }
+        test: /\.jsx?$/,
+        exclude: [/node_modules/],
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              presets: [
+                [
+                  "@babel/env",
+                  {
+                    targets: {
+                      browsers: ["last 5 Chrome versions"],
+                    },
+                    modules: false,
+                    loose: true,
+                  },
+                ],
+                "@babel/react",
+              ],
+              plugins: ["lodash"],
+            },
+          },
+        ],
+      },
+    ],
+  },
+  performance: {
+    hints: false,
+  },
+  plugins: [
+    new CopyPlugin([
+      {
+        from: "assets",
+        to: ".",
+      },
+    ]),
+    new ProgressBarPlugin(),
+  ],
 };
