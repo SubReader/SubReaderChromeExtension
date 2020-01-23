@@ -1,11 +1,14 @@
-const _ = require("lodash");
+// eslint-disable-next-line import/default
+import _ from "lodash";
+
+import { SERVICE } from "./background/types";
 
 
-function activateHTML5({ service }) {
+export function activateHTML5({ service }: { service: SERVICE }): void {
   let found = false;
 
   new MutationObserver(() => {
-    const video = document.querySelector("video[src]");
+    const video: HTMLVideoElement | null = document.querySelector("video[src]");
     if (!video && found) {
       found = false;
       chrome.runtime.sendMessage({
@@ -19,7 +22,7 @@ function activateHTML5({ service }) {
     }
 
     if (video && !found) {
-      console.log("Found video", video);
+      console.info("Found video", video);
       found = true;
       const onTime = _.throttle(() => {
         chrome.runtime.sendMessage({
@@ -57,7 +60,3 @@ function activateHTML5({ service }) {
     }
   }).observe(document.body, { childList: true, subtree: true });
 }
-
-module.exports = {
-  activateHTML5,
-};

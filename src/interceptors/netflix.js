@@ -13,17 +13,15 @@
   function parseTTML(xml) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(xml, "text/xml");
-    const cues = Array.prototype.slice
-      .call(doc.getElementsByTagName("p"))
-      .map(el => {
-        const textEl = document.createElement("div");
-        textEl.innerHTML = el.innerHTML;
-        return {
-          timeIn: Math.floor(parseInt(el.attributes.begin.value) / 10000),
-          timeOut: Math.floor(parseInt(el.attributes.end.value) / 10000),
-          text: textEl.innerText,
-        };
-      });
+    const cues = Array.prototype.slice.call(doc.getElementsByTagName("p")).map(el => {
+      const textEl = document.createElement("div");
+      textEl.innerHTML = el.innerHTML;
+      return {
+        timeIn: Math.floor(parseInt(el.attributes.begin.value) / 10000),
+        timeOut: Math.floor(parseInt(el.attributes.end.value) / 10000),
+        text: textEl.innerText,
+      };
+    });
     const subtitle = {
       language: getLanguage(),
       cues,
@@ -39,15 +37,9 @@
     window.dispatchEvent(new CustomEvent("info", { detail: info }));
   }
 
-  const subtitles = [];
-
   function handleSubtitle(rawSubtitle, type) {
     const subtitle = type === "ttml" ? parseTTML(rawSubtitle) : rawSubtitle;
-    sendSubtitles([
-      subtitle,
-      { ...subtitle, language: "sv" },
-      { ...subtitle, language: "no" },
-    ]);
+    sendSubtitles([subtitle, { ...subtitle, language: "sv" }, { ...subtitle, language: "no" }]);
   }
 
   function sendTitle() {
@@ -58,15 +50,12 @@
     });
   }
 
-  XMLHttpRequest.prototype.open = intercept(
-    XMLHttpRequest.prototype.open,
-    function(method, url) {
-      if (url.indexOf("nflxvideo.net/?o") !== -1) {
-        this.addEventListener("load", () => {
-          handleSubtitle(this.response, "ttml");
-          sendTitle();
-        });
-      }
-    },
-  );
+  XMLHttpRequest.prototype.open = intercept(XMLHttpRequest.prototype.open, function(method, url) {
+    if (url.indexOf("nflxvideo.net/?o") !== -1) {
+      this.addEventListener("load", () => {
+        handleSubtitle(this.response, "ttml");
+        sendTitle();
+      });
+    }
+  });
 })();

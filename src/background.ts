@@ -84,12 +84,20 @@ function getAccessToken(): Promise<string> {
   });
 }
 
+interface IStream {
+  id: string;
+  setState: (data: any) => void;
+  setSubtitles: (data: any) => void;
+  setInfo: (data: any) => void;
+  socket: any;
+}
+
 interface IStreamEntry {
   id: string;
   status: string;
   supportedServices: Array<string>;
-  stream: any;
-  error?: Error | null;
+  stream: IStream | null;
+  error: Error | null;
 }
 
 const openedStreams: Array<IStreamEntry> = [];
@@ -97,9 +105,12 @@ const openedStreams: Array<IStreamEntry> = [];
 function getStreamEntry(id: string, service: string, stream: any): IStreamEntry {
   for (const entry of openedStreams) {
     if (entry.id === id && entry.status === "resolved" && !entry.supportedServices.includes(service)) {
-      entry.stream.setState({ playing: false, time: 0 });
-      entry.stream.socket.close();
-      entry.status = "closed";
+      if (entry.stream) {
+        // TS
+        entry.stream.setState({ playing: false, time: 0 });
+        entry.stream.socket.close();
+        entry.status = "closed";
+      }
     }
   }
 
@@ -150,13 +161,15 @@ function getStreamEntry(id: string, service: string, stream: any): IStreamEntry 
   return newEntry;
 }
 
-// @ts-ignore
-chrome.tabs.onRemoved.addListener(tabId => {
+chrome.tabs.onRemoved.addListener((tabId: string) => {
   openedStreams
     .filter(entry => entry.id === tabId && entry.status === "resolved")
     .forEach(entry => {
-      entry.stream.setState({ playing: false, time: 0 });
-      entry.stream.socket.close();
+      if (entry.stream) {
+        // TS
+        entry.stream.setState({ playing: false, time: 0 });
+        entry.stream.socket.close();
+      }
       entry.status = "closed";
     });
 });
