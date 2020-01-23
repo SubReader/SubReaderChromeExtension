@@ -1,10 +1,13 @@
 {
   "root": true,
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
   "extends": [
-    "@trejgun/eslint-config/presets/jsx"
+    "@trejgun/eslint-config/presets/tsx"
   ],
   "globals": {
-    "chrome": true
+    "chrome": "readonly"
   },
   "rules": {
     "object-curly-spacing": [

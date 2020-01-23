@@ -1,17 +1,14 @@
 import SubReader from "subreader-api";
-import {
-  ApolloClient,
-  ApolloLink,
-  InMemoryCache,
-  HttpLink,
-} from "apollo-boost";
-import gql from "graphql-tag";
-import { observableFromPromise, getDefaultTitleForService } from "./utils";
+import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from "apollo-boost";
+import { ACTION, SERVICE } from "./background/types";
+import { getDefaultTitleForService, observableFromPromise } from "./background/utils";
+import { CREATE_USER_STREAM, REFRESH_ACCESS_TOKEN } from "./background/queries";
 
 
 const httpLink = new HttpLink({ uri: "https://api.subreader.dk" });
 const authLink = new ApolloLink((operation, forward) => {
-  return observableFromPromise(getAccessToken()).flatMap(accessToken => {
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  return observableFromPromise(getAccessToken()).flatMap((accessToken: string) => {
     operation.setContext({
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -31,25 +28,32 @@ const client = new ApolloClient({
   cache,
 });
 
-function getAccessToken() {
+function getAccessToken(): Promise<string> {
   return new Promise(resolve => {
-    // @ts-ignore
+    function handleAddAccessToken(changes: { accessToken: { newValue: string } }): void {
+      const { accessToken } = changes;
+      if (accessToken && accessToken.newValue) {
+        // @ts-ignore
+        chrome.storage.onChanged.removeListener(handleAddAccessToken);
+        resolve(accessToken.newValue);
+      }
+    }
+
     chrome.storage.sync.get(
       ["accessToken", "expirationDate", "refreshToken"],
-      async ({ accessToken, expirationDate, refreshToken }) => {
+      async ({
+        accessToken,
+        expirationDate,
+        refreshToken,
+      }: {
+        accessToken: string;
+        expirationDate: string;
+        refreshToken: string;
+      }) => {
         if (accessToken) {
           if (new Date(expirationDate) <= new Date()) {
             const { data } = await client.mutate({
-              mutation: gql`
-                mutation RefreshAccessToken($refreshToken: String!) {
-                  refreshAccessToken(refreshToken: $refreshToken) {
-                    accessToken {
-                      value
-                      expiresIn
-                    }
-                  }
-                }
-              `,
+              mutation: REFRESH_ACCESS_TOKEN,
               variables: {
                 refreshToken,
               },
@@ -61,9 +65,7 @@ function getAccessToken() {
             chrome.storage.sync.set(
               {
                 accessToken: accessToken.value,
-                expirationDate: new Date(
-                  Date.now() + accessToken.expiresIn * 1000,
-                ).toISOString(),
+                expirationDate: new Date(Date.now() + accessToken.expiresIn * 1000).toISOString(),
               },
               () => {
                 resolve(accessToken.value);
@@ -73,15 +75,6 @@ function getAccessToken() {
             resolve(accessToken);
           }
         } else {
-          function handleAddAccessToken(changes) {
-            const { accessToken } = changes;
-            if (accessToken && accessToken.newValue) {
-              // @ts-ignore
-              chrome.storage.onChanged.removeListener(handleAddAccessToken);
-              resolve(accessToken.newValue);
-            }
-          }
-
           // Subscribe to accessToken updates
           // @ts-ignore
           chrome.storage.onChanged.addListener(handleAddAccessToken);
@@ -91,15 +84,19 @@ function getAccessToken() {
   });
 }
 
-const openedStreams = [];
+interface IStreamEntry {
+  id: string;
+  status: string;
+  supportedServices: Array<string>;
+  stream: any;
+  error?: Error | null;
+}
 
-function getStreamEntry(id, service, stream) {
+const openedStreams: Array<IStreamEntry> = [];
+
+function getStreamEntry(id: string, service: string, stream: any): IStreamEntry {
   for (const entry of openedStreams) {
-    if (
-      entry.id === id
-      && entry.status === "resolved"
-      && !entry.supportedServices.includes(service)
-    ) {
+    if (entry.id === id && entry.status === "resolved" && !entry.supportedServices.includes(service)) {
       entry.stream.setState({ playing: false, time: 0 });
       entry.stream.socket.close();
       entry.status = "closed";
@@ -114,31 +111,23 @@ function getStreamEntry(id, service, stream) {
     );
   });
 
-  if (entry) return entry;
+  if (entry) {
+    return entry;
+  }
 
   const newEntry = {
     id,
     supportedServices: [service],
     status: "pending",
+    stream: null,
+    error: null,
   };
 
   openedStreams.push(newEntry);
 
   authorizedClient
     .mutate({
-      mutation: gql`
-        mutation CreateUserStream($stream: UserStreamInput, $service: String!) {
-          createUserStream(stream: $stream, service: $service) {
-            stream {
-              id
-            }
-            streamToken {
-              value
-            }
-            supportedServices
-          }
-        }
-      `,
+      mutation: CREATE_USER_STREAM,
       variables: {
         service,
         stream,
@@ -146,11 +135,7 @@ function getStreamEntry(id, service, stream) {
     })
     .then(({ data }) => {
       const { createUserStream } = data;
-      const {
-        stream: streamInfo,
-        streamToken,
-        supportedServices,
-      } = createUserStream;
+      const { stream: streamInfo, streamToken, supportedServices } = createUserStream;
       const stream = new SubReader.Stream(streamToken.value, streamInfo.id);
 
       newEntry.status = "resolved";
@@ -176,13 +161,16 @@ chrome.tabs.onRemoved.addListener(tabId => {
     });
 });
 
-// @ts-ignore
 chrome.runtime.onMessage.addListener(
-  async ({ action, service, payload }, sender, sendResponse) => {
-    console.log(service, action);
+  (
+    { action, service, payload }: { action: ACTION; service: SERVICE; payload: any },
+    sender: any,
+    sendResponse: (data: any) => void,
+  ): boolean => {
+    console.info(service, action);
     switch (action) {
-      case "info": {
-        console.log("Setting info", payload);
+      case ACTION.INFO: {
+        console.info("Setting info", payload);
         const info = {
           title: getDefaultTitleForService(service),
           backdrop: {
@@ -199,8 +187,8 @@ chrome.runtime.onMessage.addListener(
         }
         break;
       }
-      case "subtitles": {
-        console.log("Setting subtitles", payload);
+      case ACTION.SUBTITLES: {
+        console.info("Setting subtitles", payload);
         const subtitles = payload;
         const { stream } = getStreamEntry(sender.tab.id, service, {
           subtitles,
@@ -210,8 +198,8 @@ chrome.runtime.onMessage.addListener(
         }
         break;
       }
-      case "state": {
-        console.log("Setting state", payload);
+      case ACTION.STATE: {
+        console.info("Setting state", payload);
         const state = payload;
         const { stream } = getStreamEntry(sender.tab.id, service, { state });
         if (stream) {
@@ -219,12 +207,12 @@ chrome.runtime.onMessage.addListener(
         }
         break;
       }
-      case "promote": {
-        console.log("Promoting stream", payload);
+      case ACTION.PROMOTE: {
+        console.info("Promoting stream", payload);
         break;
       }
 
-      case "getStreams": {
+      case ACTION.GET_STREAMS: {
         sendResponse({
           streams: openedStreams.map(entry => ({
             ...entry,
