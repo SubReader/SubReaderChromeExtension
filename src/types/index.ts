@@ -1,0 +1,1 @@
+export { IStream } from "./stream";

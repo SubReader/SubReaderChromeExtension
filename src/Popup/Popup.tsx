@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import * as React from "react";
 import styled from "styled-components";
+// eslint-disable-next-line import/default
 import QRCode from "qrcode.react";
-import Login from "./Login";
-import Button from "./Button";
+import { Login } from "./Login";
+import { Button } from "./Button";
 
-import LogoComponent from "./Logo";
-import LoadingIndicator from "./LoadingIndicator";
+import { LogoSvg } from "./LogoSvg";
+import { LoadingIndicator } from "./LoadingIndicator";
+
+import { IStream } from "../types";
 
 
 const PopupWrapper = styled.div`
@@ -23,7 +26,7 @@ const LogoContainer = styled.div`
   margin-top: 20px;
 `;
 
-const Logo = styled(LogoComponent)`
+const Logo = styled(LogoSvg)`
   display: block;
   width: 140px;
   margin: 0 auto;
@@ -69,14 +72,14 @@ const VideoGuide = styled.video`
   min-width: 420px;
 `;
 
-export default function Popup() {
-  const [loading, setLoading] = useState(false);
-  const [streams, setStreams] = useState([]);
-  const [user, setUser] = useState();
-  const [currentTabId, setCurrentTabId] = useState();
-  const [showError, setShowError] = useState(false);
+export const Popup: React.FC = () => {
+  const [loading, setLoading] = React.useState(false);
+  const [streams, setStreams] = React.useState<Array<IStream>>([]);
+  const [user, setUser] = React.useState();
+  const [currentTabId, setCurrentTabId] = React.useState();
+  const [showError, setShowError] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // @ts-ignore
     chrome.storage.sync.get("user", ({ user }) => {
       if (user) {
@@ -95,7 +98,7 @@ export default function Popup() {
     });
   }, []);
 
-  function handleLogin({ accessToken, refreshToken, user }) {
+  function handleLogin({ accessToken, refreshToken, user }: { accessToken: any; refreshToken: any; user: any }): void {
     setLoading(true);
     // @ts-ignore
     chrome.storage.sync.set(
@@ -103,9 +106,7 @@ export default function Popup() {
         user: JSON.stringify(user),
         accessToken: accessToken.value,
         refreshToken: refreshToken.value,
-        expirationDate: new Date(
-          Date.now() + accessToken.expiresIn * 1000,
-        ).toISOString(),
+        expirationDate: new Date(Date.now() + accessToken.expiresIn * 1000).toISOString(),
       },
       () => {
         setUser(user);
@@ -114,24 +115,21 @@ export default function Popup() {
     );
   }
 
-  function handleLogout() {
+  function handleLogout(): void {
     setLoading(true);
     // @ts-ignore
-    chrome.storage.sync.remove(
-      ["user", "accessToken", "refreshToken", "expirationDate"],
-      () => {
-        setUser(null);
-        setLoading(false);
-      },
-    );
+    chrome.storage.sync.remove(["user", "accessToken", "refreshToken", "expirationDate"], () => {
+      setUser(null);
+      setLoading(false);
+    });
   }
 
-  function toggleShowError() {
+  function toggleShowError(): void {
     setShowError(!showError);
   }
 
   const statusSortingOrder = ["resolved", "pending", "rejected", "closed"];
-  const entry = streams
+  const entry: any = streams
     .sort((a, b) => {
       return (
         statusSortingOrder.findIndex(status => status === a.status)
@@ -157,19 +155,13 @@ export default function Popup() {
                 <QRWrapper>
                   <Title>Scan QR koden med SubReader appen</Title>
                   <QRContainer>
-                    <QRCode
-                      size={180}
-                      level="L"
-                      value={`subreader://${entry.stream.id}`}
-                    />
+                    <QRCode size={180} level="L" value={`subreader://${entry.stream.id}`} />
                   </QRContainer>
                 </QRWrapper>
               ) : entry.status === "rejected" ? (
                 <div>
                   <Title>Kunne ikke åbne stream.</Title>
-                  <button onClick={toggleShowError}>
-                    {showError ? "Skjul" : "Vis"} fejl
-                  </button>
+                  <button onClick={toggleShowError}>{showError ? "Skjul" : "Vis"} fejl</button>
                   {showError && (
                     <div>
                       <SubTitle>{entry.error.message}</SubTitle>
@@ -181,12 +173,7 @@ export default function Popup() {
             ) : (
               <IntroContainer>
                 <Title>Åben en streaming tjeneste for at bruge SubReader</Title>
-                <VideoGuide
-                  src="video1.mp4"
-                  autoPlay={true}
-                  controls={true}
-                  loop={true}
-                />
+                <VideoGuide src="video1.mp4" autoPlay={true} controls={true} loop={true} />
               </IntroContainer>
             )}
             <Button onClick={handleLogout}>Log ud</Button>
@@ -197,4 +184,4 @@ export default function Popup() {
       </PopupContainer>
     </PopupWrapper>
   );
-}
+};

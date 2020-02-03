@@ -1,12 +1,14 @@
-import React from "react";
+import * as React from "react";
 import styled from "styled-components";
 import { Mutation } from "react-apollo";
 import { useFormState } from "react-use-form-state";
-import gql from "graphql-tag";
 
-import LoadingIndicator from "./LoadingIndicator";
-import SubmitInput from "./SubmitInput";
-import TextInput from "./TextInput";
+import { LoadingIndicator } from "./LoadingIndicator";
+import { SubmitInput } from "./SubmitInput";
+import { TextInput } from "./TextInput";
+import { AUTHENTICATE_WITH_EMAIL } from "./queries";
+import { GraphQLError } from "graphql";
+import { ApolloError } from "apollo-client";
 
 
 const PasswordLoginContainer = styled.div`
@@ -19,48 +21,25 @@ const PasswordLoginContainer = styled.div`
 
 const InputGroup = styled.div``;
 
-const AUTHENTICATION_FRAGMENT = gql`
-  fragment AuthenticationFragment on AuthenticationResult {
-    accessToken {
-      value
-      expiresIn
-    }
-    refreshToken {
-      value
-    }
-    user {
-      name
-    }
-  }
-`;
+interface IPasswordLoginProps {
+  onLogin: (data: any) => void;
+}
 
-export const AUTHENTICATE = gql`
-  mutation Authenticate($email: String!, $password: String!) {
-    authenticate(email: $email, password: $password) {
-      ...AuthenticationFragment
-    }
-  }
-  ${AUTHENTICATION_FRAGMENT}
-`;
-
-export default function PasswordLogin({ onLogin }) {
-  const [
-    formState,
-    { email: emailField, password: passwordField },
-  ] = useFormState();
+export const PasswordLogin: React.FC<IPasswordLoginProps> = ({ onLogin }) => {
+  const [formState, { email: emailField, password: passwordField }] = useFormState();
   const valid = formState.validity.email && formState.validity.password;
 
   return (
     <Mutation
-      mutation={AUTHENTICATE}
-      onCompleted={({ authenticate }) => {
+      mutation={AUTHENTICATE_WITH_EMAIL}
+      onCompleted={({ authenticate }: { authenticate: any }): void => {
         onLogin(authenticate);
       }}
     >
-      {(authenticate, { loading, error }) => (
+      {(authenticate: any, { loading, error }: { loading: boolean; error?: ApolloError }): React.ReactElement => (
         <PasswordLoginContainer>
           <form
-            onSubmit={e => {
+            onSubmit={(e: React.FormEvent<HTMLFormElement>): void => {
               e.preventDefault();
               if (valid) {
                 const { email, password } = formState.values;
@@ -78,17 +57,16 @@ export default function PasswordLogin({ onLogin }) {
               <LoadingIndicator />
             ) : error ? (
               <ul>
-                {error.graphQLErrors.map((error, i) => (
-                  <li key={i}>{error.message}</li>
-                ))}
+                {error.graphQLErrors.map(
+                  (error: GraphQLError, i: number): React.ReactElement => (
+                    <li key={i}>{error.message}</li>
+                  ),
+                )}
               </ul>
             ) : null}
             <InputGroup>
               <TextInput {...emailField("email")} placeholder="Email" />
-              <TextInput
-                {...passwordField("password")}
-                placeholder="Adgangskode"
-              />
+              <TextInput {...passwordField("password")} placeholder="Adgangskode" />
             </InputGroup>
             <SubmitInput type="submit" value="Log ind" />
           </form>
@@ -96,4 +74,4 @@ export default function PasswordLogin({ onLogin }) {
       )}
     </Mutation>
   );
-}
+};

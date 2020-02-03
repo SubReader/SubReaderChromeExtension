@@ -1,7 +1,7 @@
-import React from "react";
+import * as React from "react";
 
 
-export default function Logo(props) {
+export const LogoSvg: React.FC = props => {
   return (
     <svg
       version="1.1"
@@ -32,4 +32,4 @@ export default function Logo(props) {
       </g>
     </svg>
   );
-}
+};

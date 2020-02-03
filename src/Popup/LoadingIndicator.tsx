@@ -1,6 +1,6 @@
-import React from "react";
+import * as React from "react";
 import styled from "styled-components";
-import Spinner from "./Spinner";
+import { Spinner } from "./Spinner";
 
 
 const LoadingContainer = styled.div`
@@ -16,10 +16,10 @@ const LoadingContainer = styled.div`
   backdrop-filter: blur(5px);
 `;
 
-export default function LoadingIndicator() {
+export const LoadingIndicator: React.FC = () => {
   return (
     <LoadingContainer>
       <Spinner />
     </LoadingContainer>
   );
-}
+};

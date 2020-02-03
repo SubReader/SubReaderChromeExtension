@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 
-const SubmitInput = styled.input`
+export const SubmitInput = styled.input`
   display: block;
   width: 100%;
   margin: 5px auto;
@@ -16,5 +16,3 @@ const SubmitInput = styled.input`
   text-align: center;
   cursor: pointer;
 `;
-
-export default SubmitInput;

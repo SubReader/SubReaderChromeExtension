@@ -1,16 +1,16 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 import client from "./client";
 import { ApolloProvider } from "react-apollo";
-import Popup from "./Popup";
+import { Popup } from "./Popup";
 
 
-function Entry() {
+const Entry: React.FC = () => {
   return (
     <ApolloProvider client={client}>
       <Popup />
     </ApolloProvider>
   );
-}
+};
 
 ReactDOM.render(<Entry />, document.getElementById("app"));

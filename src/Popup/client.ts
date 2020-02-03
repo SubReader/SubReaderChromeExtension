@@ -1,8 +1,6 @@
 import ApolloClient from "apollo-boost";
 
 
-const client = new ApolloClient({
+export default new ApolloClient({
   uri: "https://api.subreader.dk",
 });
-
-export default client;

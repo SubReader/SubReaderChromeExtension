@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 
-const Button = styled.button`
+export const Button = styled.button`
   display: block;
   width: 100%;
   padding: 10px;
@@ -17,5 +17,3 @@ const Button = styled.button`
     opacity: 1;
   }
 `;
-
-export default Button;

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import * as React from "react";
 import styled from "styled-components";
-import QRCodeLogin from "./QRCodeLogin";
-import CodeLogin from "./CodeLogin";
-import SchoolLogin from "./SchoolLogin";
+import { QRCodeLogin } from "./QRCodeLogin";
+import { CodeLogin } from "./CodeLogin";
+import { SchoolLogin } from "./SchoolLogin";
 
 
 const LoginWrapper = styled.div`
@@ -39,8 +39,12 @@ const LoginTypeButtonContainer = styled.div`
   align-ttems: center;
 `;
 
-export default function Login({ onLogin }) {
-  const [showAlternativeLogin, setShowAlternativeLogin] = useState(false);
+interface ILoginProps {
+  onLogin: (data: any) => void;
+}
+
+export const Login: React.FC<ILoginProps> = ({ onLogin }) => {
+  const [showAlternativeLogin, setShowAlternativeLogin] = React.useState(false);
 
   return (
     <LoginWrapper>
@@ -56,7 +60,7 @@ export default function Login({ onLogin }) {
         )}
         <LoginTypeButtonContainer>
           <LoginTypeToggleButton
-            onClick={() => {
+            onClick={(): void => {
               setShowAlternativeLogin(!showAlternativeLogin);
             }}
           >
@@ -66,4 +70,4 @@ export default function Login({ onLogin }) {
       </LoginContainer>
     </LoginWrapper>
   );
-}
+};

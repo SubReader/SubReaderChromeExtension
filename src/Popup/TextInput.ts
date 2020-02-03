@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 
-const TextInput = styled.input`
+export const TextInput = styled.input`
   display: block;
   border: none;
   border-bottom: 1px solid #aaa;
@@ -13,5 +13,3 @@ const TextInput = styled.input`
     border-bottom-color: black;
   }
 `;
-
-export default TextInput;
