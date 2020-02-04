@@ -1,3 +1,6 @@
+import { SERVICE } from "./enums";
+
+
 export interface IStream {
   id: string;
   setState: (data: any) => void;
@@ -9,7 +12,7 @@ export interface IStream {
 export interface IStreamEntry {
   id: string;
   status: string;
-  supportedServices: Array<string>;
+  supportedServices: Array<SERVICE>;
   stream: IStream | null;
   error: Error | null;
 }

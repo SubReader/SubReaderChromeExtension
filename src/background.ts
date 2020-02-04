@@ -88,14 +88,14 @@ function getAccessToken(): Promise<string> {
 
 const openedStreams: Array<IStreamEntry> = [];
 
-function getStreamEntry(id: string, service: string, stream: any): IStreamEntry {
+function getStreamEntry(id: string, service: SERVICE, stream: any): IStreamEntry {
   for (const entry of openedStreams) {
     if (entry.id === id && entry.status === STATUS.RESOLVED && !entry.supportedServices.includes(service)) {
-      if (entry.stream) {
-        entry.stream.setState({ playing: false, time: 0 });
-        entry.stream.socket.close();
-        entry.status = STATUS.CLOSED;
-      }
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      entry.stream!.setState({ playing: false, time: 0 });
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      entry.stream!.socket.close();
+      entry.status = STATUS.CLOSED;
     }
   }
 

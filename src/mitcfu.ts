@@ -1,16 +1,16 @@
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
-import code from "raw-loader!babel-loader!./interceptors/netflix";
+import code from "raw-loader!babel-loader!./interceptors/mitcfu";
+import { ACTION, SERVICE } from "./types/enums";
 
 import { activateHTML5 } from "./html5";
-import { ACTION, SERVICE } from "./types/enums";
 
 
 const script = document.createElement("script");
 script.textContent = code;
-document.body.appendChild(script);
+document.body.append(script);
 
-const service = SERVICE.NETFLIX;
+const service = SERVICE.MITCFU;
 
 activateHTML5(service);
 

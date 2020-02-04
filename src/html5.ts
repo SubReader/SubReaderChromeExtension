@@ -4,7 +4,7 @@ import _ from "lodash";
 import { SERVICE, ACTION } from "./types/enums";
 
 
-export function activateHTML5({ service }: { service: SERVICE }): void {
+export function activateHTML5(service: SERVICE): void {
   let found = false;
 
   new MutationObserver(() => {

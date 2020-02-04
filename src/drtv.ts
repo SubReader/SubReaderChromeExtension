@@ -1,18 +1,15 @@
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
-import code from "raw-loader!babel-loader!./interceptors/netflix";
+import code from "raw-loader!babel-loader!./interceptors/drtv";
 
-import { activateHTML5 } from "./html5";
 import { ACTION, SERVICE } from "./types/enums";
 
+
+const service = SERVICE.DRTV;
 
 const script = document.createElement("script");
 script.textContent = code;
 document.body.appendChild(script);
-
-const service = SERVICE.NETFLIX;
-
-activateHTML5(service);
 
 function sendMessage({ action, payload }: { action: ACTION; payload: any }): void {
   chrome.runtime.sendMessage({

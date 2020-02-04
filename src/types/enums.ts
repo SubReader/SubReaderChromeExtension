@@ -4,20 +4,22 @@ export enum SERVICE {
   HBONORDIC = "hbonordic",
   FILMCENTRALEN = "filmcentralen",
   MITCFU = "mitcfu",
+  URPLAY = "urplay",
+  DRTV = "drtv",
 }
 
 export enum ACTION {
-  INFO = "info",
-  SUBTITLES = "subtitles",
-  STATE = "state",
-  PROMOTE = "promote",
-  GET_STREAMS = "getStreams",
+  INFO = "INFO",
+  SUBTITLES = "SUBTITLES",
+  STATE = "STATE",
+  PROMOTE = "PROMOTE",
+  GET_STREAMS = "GET_STREAMS",
 }
 
 // current order is used by sorting algorithm
 export enum STATUS {
-  RESOLVED = "resolved",
-  PENDING = "pending",
-  REJECTED = "rejected",
-  CLOSED = "closed",
+  RESOLVED = "RESOLVED",
+  PENDING = "PENDING",
+  REJECTED = "REJECTED",
+  CLOSED = "CLOSED",
 }
