@@ -9,11 +9,11 @@ export enum SERVICE {
 }
 
 export enum ACTION {
-  INFO = "INFO",
-  SUBTITLES = "SUBTITLES",
-  STATE = "STATE",
-  PROMOTE = "PROMOTE",
-  GET_STREAMS = "GET_STREAMS",
+  INFO = "info",
+  SUBTITLES = "subtitles",
+  STATE = "state",
+  PROMOTE = "promote",
+  GET_STREAMS = "getStreams",
 }
 
 // current order is used by sorting algorithm
