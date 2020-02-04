@@ -1,6 +1,8 @@
 import * as React from "react";
 import styled from "styled-components";
 import { useMutation } from "@apollo/react-hooks";
+
+import { IAuthResult } from "../types";
 import { AUTHENTICATE_WITH_MVIDSIGON_MUTATION, REGISTER_WITH_MVIDSIGON_MUTATION } from "./queries";
 
 
@@ -30,38 +32,37 @@ function parseQueryParams(url: string): any {
 }
 
 interface ISchoolLoginProps {
-  onLogin: (data: any) => void;
+  onLogin: (data: IAuthResult) => void;
 }
 
 export const SchoolLogin: React.FC<ISchoolLoginProps> = ({ onLogin }) => {
-  const [authenticateWithMVIDSignOn] = useMutation(AUTHENTICATE_WITH_MVIDSIGON_MUTATION);
+  const [authenticateWithMVIDSignFn] = useMutation(AUTHENTICATE_WITH_MVIDSIGON_MUTATION);
 
-  const [registerWithMVIDSignOn] = useMutation(REGISTER_WITH_MVIDSIGON_MUTATION);
+  const [registerWithMVIDSignFn] = useMutation(REGISTER_WITH_MVIDSIGON_MUTATION);
 
   return (
     <SchoolLoginButton
-      onClick={() => {
+      onClick={(): void => {
         chrome.identity.launchWebAuthFlow(
           {
             url: `https://signon.vitec-mv.com/?returnUrl=${chrome.identity.getRedirectURL()}`,
-
             interactive: true,
           },
           async (returnURL: string) => {
-            const { SessionID }: { SessionID: string } = parseQueryParams(returnURL);
+            const { SessionID: sessionID }: { SessionID: string } = parseQueryParams(returnURL);
 
             try {
-              const res = await registerWithMVIDSignOn({
+              const res = await registerWithMVIDSignFn({
                 variables: {
-                  sessionID: SessionID,
+                  sessionID,
                 },
               });
               onLogin(res.data.registerWithMVIDSignOn);
             } catch (registrationError) {
               try {
-                const res = await authenticateWithMVIDSignOn({
+                const res = await authenticateWithMVIDSignFn({
                   variables: {
-                    sessionID: SessionID,
+                    sessionID,
                   },
                 });
                 onLogin(res.data.authenticateWithMVIDSignOn);

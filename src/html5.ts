@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/default
 import _ from "lodash";
 
-import { SERVICE } from "./background/types";
+import { SERVICE, ACTION } from "./types/enums";
 
 
 export function activateHTML5({ service }: { service: SERVICE }): void {
@@ -12,7 +12,7 @@ export function activateHTML5({ service }: { service: SERVICE }): void {
     if (!video && found) {
       found = false;
       chrome.runtime.sendMessage({
-        action: "state",
+        action: ACTION.STATE,
         service,
         payload: {
           time: 0,
@@ -26,7 +26,7 @@ export function activateHTML5({ service }: { service: SERVICE }): void {
       found = true;
       const onTime = _.throttle(() => {
         chrome.runtime.sendMessage({
-          action: "state",
+          action: ACTION.STATE,
           service,
           payload: {
             time: Math.floor(video.currentTime * 1000),
@@ -38,7 +38,7 @@ export function activateHTML5({ service }: { service: SERVICE }): void {
       video.addEventListener("timeupdate", () => onTime());
       video.addEventListener("play", () => {
         chrome.runtime.sendMessage({
-          action: "state",
+          action: ACTION.STATE,
           service,
           payload: {
             time: Math.floor(video.currentTime * 1000),
@@ -49,7 +49,7 @@ export function activateHTML5({ service }: { service: SERVICE }): void {
 
       video.addEventListener("pause", () => {
         chrome.runtime.sendMessage({
-          action: "state",
+          action: ACTION.STATE,
           service,
           payload: {
             time: Math.floor(video.currentTime * 1000),

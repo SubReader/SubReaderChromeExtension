@@ -2,7 +2,7 @@ import { activateHTML5 } from "./html5";
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
 import code from "raw-loader!babel-loader!./interceptors/netflix";
-import { ACTION, SERVICE } from "./background/types";
+import { ACTION, SERVICE } from "./types/enums";
 
 
 const script = document.createElement("script");

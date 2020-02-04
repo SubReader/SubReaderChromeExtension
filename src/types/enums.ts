@@ -13,3 +13,11 @@ export enum ACTION {
   PROMOTE = "promote",
   GET_STREAMS = "getStreams",
 }
+
+// current order is used by sorting algorithm
+export enum STATUS {
+  RESOLVED = "resolved",
+  PENDING = "pending",
+  REJECTED = "rejected",
+  CLOSED = "closed",
+}

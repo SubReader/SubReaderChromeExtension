@@ -30,7 +30,7 @@ export const REQUEST_ACCESS = gql`
 
 export const POLL_ACCESS = gql`
   mutation PollAccess($authToken: String!) {
-    pollAccess(authToken: $authToken) {
+    authResult: pollAccess(authToken: $authToken) {
       ...AuthenticationFragment
     }
   }

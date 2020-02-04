@@ -1,5 +1,5 @@
 import { Observable } from "apollo-boost";
-import { SERVICE } from "./types";
+import { SERVICE } from "../types/enums";
 
 
 export function observableFromPromise<T>(promise: Promise<T>): Observable<T> {

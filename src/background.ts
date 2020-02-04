@@ -1,6 +1,8 @@
 import SubReader from "subreader-api";
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from "apollo-boost";
-import { ACTION, SERVICE } from "./background/types";
+
+import { ACTION, SERVICE, STATUS } from "./types/enums";
+import { IStreamEntry } from "./types";
 import { getDefaultTitleForService, observableFromPromise } from "./background/utils";
 import { CREATE_USER_STREAM, REFRESH_ACCESS_TOKEN } from "./background/queries";
 
@@ -84,32 +86,15 @@ function getAccessToken(): Promise<string> {
   });
 }
 
-interface IStream {
-  id: string;
-  setState: (data: any) => void;
-  setSubtitles: (data: any) => void;
-  setInfo: (data: any) => void;
-  socket: any;
-}
-
-interface IStreamEntry {
-  id: string;
-  status: string;
-  supportedServices: Array<string>;
-  stream: IStream | null;
-  error: Error | null;
-}
-
 const openedStreams: Array<IStreamEntry> = [];
 
 function getStreamEntry(id: string, service: string, stream: any): IStreamEntry {
   for (const entry of openedStreams) {
-    if (entry.id === id && entry.status === "resolved" && !entry.supportedServices.includes(service)) {
+    if (entry.id === id && entry.status === STATUS.RESOLVED && !entry.supportedServices.includes(service)) {
       if (entry.stream) {
-        // TS
         entry.stream.setState({ playing: false, time: 0 });
         entry.stream.socket.close();
-        entry.status = "closed";
+        entry.status = STATUS.CLOSED;
       }
     }
   }
@@ -118,7 +103,7 @@ function getStreamEntry(id: string, service: string, stream: any): IStreamEntry 
     return (
       entry.id === id
       && entry.supportedServices.includes(service)
-      && (entry.status === "pending" || entry.status === "resolved")
+      && (entry.status === STATUS.PENDING || entry.status === STATUS.RESOLVED)
     );
   });
 
@@ -129,7 +114,7 @@ function getStreamEntry(id: string, service: string, stream: any): IStreamEntry 
   const newEntry = {
     id,
     supportedServices: [service],
-    status: "pending",
+    status: STATUS.PENDING,
     stream: null,
     error: null,
   };
@@ -149,12 +134,12 @@ function getStreamEntry(id: string, service: string, stream: any): IStreamEntry 
       const { stream: streamInfo, streamToken, supportedServices } = createUserStream;
       const stream = new SubReader.Stream(streamToken.value, streamInfo.id);
 
-      newEntry.status = "resolved";
+      newEntry.status = STATUS.RESOLVED;
       newEntry.stream = stream;
       newEntry.supportedServices = supportedServices;
     })
     .catch(error => {
-      newEntry.status = "rejected";
+      newEntry.status = STATUS.REJECTED;
       newEntry.error = error;
     });
 
@@ -170,7 +155,7 @@ chrome.tabs.onRemoved.addListener((tabId: string) => {
         entry.stream.setState({ playing: false, time: 0 });
         entry.stream.socket.close();
       }
-      entry.status = "closed";
+      entry.status = STATUS.CLOSED;
     });
 });
 
