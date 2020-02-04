@@ -1,7 +1,8 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import client from "./client";
 import { ApolloProvider } from "react-apollo";
+
+import client from "./client";
 import { Popup } from "./Popup";
 
 

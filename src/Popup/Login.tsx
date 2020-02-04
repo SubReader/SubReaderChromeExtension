@@ -1,8 +1,10 @@
 import * as React from "react";
 import styled from "styled-components";
+
 import { QRCodeLogin } from "./QRCodeLogin";
 import { CodeLogin } from "./CodeLogin";
 import { SchoolLogin } from "./SchoolLogin";
+import { IAuthResult } from "../types";
 
 
 const LoginWrapper = styled.div`
@@ -40,7 +42,7 @@ const LoginTypeButtonContainer = styled.div`
 `;
 
 interface ILoginProps {
-  onLogin: (data: any) => void;
+  onLogin: (data: IAuthResult) => void;
 }
 
 export const Login: React.FC<ILoginProps> = ({ onLogin }) => {

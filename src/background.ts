@@ -1,5 +1,8 @@
 import SubReader from "subreader-api";
-import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from "apollo-boost";
+import { ApolloClient } from "apollo-client";
+import { ApolloLink } from "apollo-link";
+import { HttpLink } from "apollo-link-http";
+import { InMemoryCache } from "apollo-cache-inmemory";
 
 import { ACTION, SERVICE, STATUS } from "./types/enums";
 import { IStreamEntry } from "./types";
@@ -150,11 +153,10 @@ chrome.tabs.onRemoved.addListener((tabId: string) => {
   openedStreams
     .filter(entry => entry.id === tabId && entry.status === "resolved")
     .forEach(entry => {
-      if (entry.stream) {
-        // TS
-        entry.stream.setState({ playing: false, time: 0 });
-        entry.stream.socket.close();
-      }
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      entry.stream!.setState({ playing: false, time: 0 });
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      entry.stream!.socket.close();
       entry.status = STATUS.CLOSED;
     });
 });

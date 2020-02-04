@@ -1,4 +1,4 @@
-import { Observable } from "apollo-boost";
+import { Observable } from "apollo-link";
 import { SERVICE } from "../types/enums";
 
 
