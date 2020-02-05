@@ -5,6 +5,7 @@ import { IStreamEntry } from "./types";
 import { authorizedClient } from "./popup/client";
 import { getDefaultTitleForService } from "./background/utils";
 import { CREATE_USER_STREAM } from "./background/queries";
+import { CREATE_REEPAY_RECURRING_SESSION_FOR_COUNTRY } from "./popup/Test/queries";
 
 
 const openedStreams: Array<IStreamEntry> = [];
@@ -141,6 +142,29 @@ chrome.runtime.onMessage.addListener(
               : null,
           })),
         });
+        break;
+      }
+
+      case ACTION.GET_PAYMENT_URL: {
+        const plan = payload;
+        const PAYMENT_ACCEPT_URL = "https://api.subreader.dk/accept";
+        const PAYMENT_CANCEL_URL = "https://api.subreader.dk/cancel";
+
+        authorizedClient
+          .mutate({
+            mutation: CREATE_REEPAY_RECURRING_SESSION_FOR_COUNTRY,
+            variables: {
+              country: plan.country,
+              buttonText: "Save card",
+              acceptURL: `${PAYMENT_ACCEPT_URL}?country=${plan.country}&reepay_plan_ID=${plan.reepayPlanIDs[plan.country]}&plan=${encodeURIComponent(JSON.stringify(plan))}`,
+              cancelURL: PAYMENT_CANCEL_URL,
+            },
+          })
+          .then(({ data }) => {
+            sendResponse(data.createReepayRecurringSession);
+          });
+
+        break;
       }
     }
     return true;

@@ -14,6 +14,7 @@ export enum ACTION {
   STATE = "state",
   PROMOTE = "promote",
   GET_STREAMS = "getStreams",
+  GET_PAYMENT_URL = "getPaymentUrl",
 }
 
 // current order is used by sorting algorithm

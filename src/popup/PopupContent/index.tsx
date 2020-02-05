@@ -4,8 +4,9 @@ import { IAuthResult, IStreamEntry, IUser } from "../../types";
 import { ACTION, STATUS } from "../../types/enums";
 import { LoadingIndicator } from "../LoadingIndicator";
 import { Login } from "../Login";
-import { Entry } from "../Entry";
-import { Button, MainWrapper } from "./styles";
+import { Test } from "../Test";
+// import { Entry } from "../Entry";
+// import { Button, MainWrapper } from "./styles";
 
 
 export const PopupContent: React.FC = () => {
@@ -76,9 +77,13 @@ export const PopupContent: React.FC = () => {
   }
 
   return (
-    <MainWrapper>
-      <Entry entry={entry} />
-      <Button onClick={handleLogout}>Log ud</Button>
-    </MainWrapper>
+    <Test />
   );
+
+  // return (
+  //   <MainWrapper>
+  //     <Entry entry={entry} />
+  //     <Button onClick={handleLogout}>Log ud</Button>
+  //   </MainWrapper>
+  // );
 };
