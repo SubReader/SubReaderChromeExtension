@@ -7,14 +7,14 @@ const CopyPlugin = require("copy-webpack-plugin");
 module.exports = {
   entry: {
     background: "./src/background",
-    netflix: "./src/netflix",
-    hbonordic: "./src/hbonordic",
-    viaplay: "./src/viaplay",
-    filmcentralen: "./src/filmcentralen",
-    mitcfu: "./src/mitcfu",
-    drtv: "./src/drtv",
-    ur: "./src/urplay",
     popup: "./src/popup",
+    netflix: "./src/content/netflix",
+    hbonordic: "./src/content/hbonordic",
+    viaplay: "./src/content/viaplay",
+    filmcentralen: "./src/content/filmcentralen",
+    mitcfu: "./src/content/mitcfu",
+    drtv: "./src/content/drtv",
+    urplay: "./src/content/urplay",
   },
   mode: "production",
   resolve: {

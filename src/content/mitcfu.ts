@@ -1,9 +1,9 @@
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
 import code from "raw-loader!babel-loader!./interceptors/mitcfu";
-import { ACTION, SERVICE } from "./types/enums";
+import { ACTION, SERVICE } from "../types/enums";
 
-import { activateHTML5 } from "./html5";
+import { activateHTML5 } from "./utils/html5";
 
 
 const script = document.createElement("script");

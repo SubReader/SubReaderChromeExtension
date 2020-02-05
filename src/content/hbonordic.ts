@@ -1,18 +1,15 @@
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
-import code from "raw-loader!babel-loader!./interceptors/netflix";
+import code from "raw-loader!babel-loader!./interceptors/hbonordic";
 
-import { activateHTML5 } from "./html5";
-import { ACTION, SERVICE } from "./types/enums";
+import { ACTION, SERVICE } from "../types/enums";
 
+
+const service = SERVICE.MITCFU;
 
 const script = document.createElement("script");
 script.textContent = code;
 document.body.appendChild(script);
-
-const service = SERVICE.NETFLIX;
-
-activateHTML5(service);
 
 function sendMessage({ action, payload }: { action: ACTION; payload: any }): void {
   chrome.runtime.sendMessage({
@@ -21,6 +18,11 @@ function sendMessage({ action, payload }: { action: ACTION; payload: any }): voi
     service,
   });
 }
+
+// @ts-ignore
+window.addEventListener("state", ({ detail }) => {
+  sendMessage({ action: ACTION.STATE, payload: detail });
+});
 
 // @ts-ignore
 window.addEventListener("subtitles", ({ detail }) => {

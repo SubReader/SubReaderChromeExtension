@@ -1,11 +1,11 @@
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
-import code from "raw-loader!babel-loader!./interceptors/hbonordic";
+import code from "raw-loader!babel-loader!./interceptors/drtv";
 
-import { ACTION, SERVICE } from "./types/enums";
+import { ACTION, SERVICE } from "../types/enums";
 
 
-const service = SERVICE.MITCFU;
+const service = SERVICE.DRTV;
 
 const script = document.createElement("script");
 script.textContent = code;
@@ -18,11 +18,6 @@ function sendMessage({ action, payload }: { action: ACTION; payload: any }): voi
     service,
   });
 }
-
-// @ts-ignore
-window.addEventListener("state", ({ detail }) => {
-  sendMessage({ action: ACTION.STATE, payload: detail });
-});
 
 // @ts-ignore
 window.addEventListener("subtitles", ({ detail }) => {

@@ -38,7 +38,7 @@
     },
     {
       "matches": ["*://*.urplay.se/*", "*://urplay.se/*"],
-      "js": ["ur.js"]
+      "js": ["urplay.js"]
     }
   ],
   "browser_action": {

@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/default
 import _ from "lodash";
 
-import { SERVICE, ACTION } from "./types/enums";
+import { SERVICE, ACTION } from "../../types/enums";
 
 
 export function activateHTML5(service: SERVICE): void {
