@@ -8,7 +8,7 @@
     "build": "webpack",
     "start": "npm run build -- -w",
     "lint": "eslint . --fix --ext .js,.jsx,.ts,.tsx",
-    "prettier": "prettier \"src/**/*.js\" --write"
+    "prettier": "prettier \"src/**/*.{js,jsx,ts,tsx}\" --write"
   },
   "config": {
     "server": "https://api.subreader.dk"
