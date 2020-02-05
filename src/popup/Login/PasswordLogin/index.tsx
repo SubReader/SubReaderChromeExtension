@@ -7,7 +7,7 @@ import { IAuthResult } from "../../../types";
 import { LoadingIndicator } from "../../LoadingIndicator";
 import { SubmitInput } from "../../SubmitInput";
 import { TextInput } from "../../TextInput";
-import { AUTHENTICATE_WITH_EMAIL } from "../../queries";
+import { AUTHENTICATE_WITH_EMAIL } from "../queries";
 import { InputGroup, PasswordLoginContainer } from "./styles";
 
 

@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "react-apollo";
 
 import { IAuthResult } from "../../../types";
 import { LoadingIndicator } from "../../LoadingIndicator";
-import { POLL_ACCESS, REQUEST_ACCESS } from "../../queries";
+import { POLL_ACCESS, REQUEST_ACCESS } from "../queries";
 import { QRCode, QRCodeTitle, QRCodeWrapper } from "./styles";
 
 

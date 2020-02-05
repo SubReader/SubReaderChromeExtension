@@ -2,7 +2,7 @@ import * as React from "react";
 import { useMutation } from "@apollo/react-hooks";
 
 import { IAuthResult } from "../../../types";
-import { AUTHENTICATE_WITH_MVIDSIGON_MUTATION, REGISTER_WITH_MVIDSIGON_MUTATION } from "../../queries";
+import { AUTHENTICATE_WITH_MVIDSIGON_MUTATION, REGISTER_WITH_MVIDSIGON_MUTATION } from "../queries";
 import { SchoolLoginButton } from "./styles";
 
 
