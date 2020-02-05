@@ -1,4 +1,5 @@
 import * as React from "react";
+import { FormattedMessage } from "react-intl";
 
 import { IAuthResult, IStreamEntry, IUser } from "../../types";
 import { ACTION, STATUS } from "../../types/enums";
@@ -78,7 +79,9 @@ export const PopupContent: React.FC = () => {
   return (
     <MainWrapper>
       <Entry entry={entry} />
-      <Button onClick={handleLogout}>Log ud</Button>
+      <Button onClick={handleLogout}>
+        <FormattedMessage id="logout" />
+      </Button>
     </MainWrapper>
   );
 };
