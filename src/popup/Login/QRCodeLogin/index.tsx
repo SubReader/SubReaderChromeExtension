@@ -1,26 +1,11 @@
 import * as React from "react";
-import styled from "styled-components";
 import { useMutation, useQuery } from "react-apollo";
-// eslint-disable-next-line import/default
-import QRCodeComponent from "qrcode.react";
 
-import { IAuthResult } from "../types";
-import { LoadingIndicator } from "./LoadingIndicator";
-import { POLL_ACCESS, REQUEST_ACCESS } from "./queries";
+import { IAuthResult } from "../../../types";
+import { LoadingIndicator } from "../../LoadingIndicator";
+import { POLL_ACCESS, REQUEST_ACCESS } from "../../queries";
+import { QRCode, QRCodeTitle, QRCodeWrapper } from "./styles";
 
-
-const QRCode = styled(QRCodeComponent)`
-  display: block;
-  margin: 0 auto;
-`;
-
-const QRCodeWrapper = styled.div`
-  min-width: 200px;
-`;
-
-const QRCodeTitle = styled.h3`
-  text-align: center;
-`;
 
 interface IQRCodeLoginProps {
   onLogin: (data: any) => void;

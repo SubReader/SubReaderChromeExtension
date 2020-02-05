@@ -1,10 +1,7 @@
-import * as React from "react";
 import styled from "styled-components";
 
-import { Spinner } from "./Spinner";
 
-
-const LoadingContainer = styled.div`
+export const LoadingContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,11 +13,3 @@ const LoadingContainer = styled.div`
   background-color: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(5px);
 `;
-
-export const LoadingIndicator: React.FC = () => {
-  return (
-    <LoadingContainer>
-      <Spinner />
-    </LoadingContainer>
-  );
-};

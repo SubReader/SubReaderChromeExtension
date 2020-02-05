@@ -1,20 +1,12 @@
 import * as React from "react";
-import styled from "styled-components";
 
-import { IAuthResult, IStreamEntry, IUser } from "../types";
-import { LoadingIndicator } from "./LoadingIndicator";
-import { Login } from "./Login";
-import { Button } from "./Button";
-import { ACTION, STATUS } from "../types/enums";
-import { Entry } from "./Entry";
+import { IAuthResult, IStreamEntry, IUser } from "../../types";
+import { ACTION, STATUS } from "../../types/enums";
+import { LoadingIndicator } from "../LoadingIndicator";
+import { Login } from "../Login";
+import { Entry } from "../Entry";
+import { Button, MainWrapper } from "./styles";
 
-
-const MainWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 10px;
-`;
 
 export const PopupContent: React.FC = () => {
   const [loading, setLoading] = React.useState(false);

@@ -1,25 +1,10 @@
 import * as React from "react";
-import styled from "styled-components";
 import { useMutation } from "@apollo/react-hooks";
 
-import { IAuthResult } from "../types";
-import { AUTHENTICATE_WITH_MVIDSIGON_MUTATION, REGISTER_WITH_MVIDSIGON_MUTATION } from "./queries";
+import { IAuthResult } from "../../../types";
+import { AUTHENTICATE_WITH_MVIDSIGON_MUTATION, REGISTER_WITH_MVIDSIGON_MUTATION } from "../../queries";
+import { SchoolLoginButton } from "./styles";
 
-
-const SchoolLoginButton = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  transition: opacity linear 200ms;
-  cursor: pointer;
-  border: 1px solid #ddd;
-  padding: 5px;
-
-  &:hover {
-    border-color: #aaa;
-  }
-`;
 
 function parseQueryParams(url: string): any {
   const [, queryParams] = url.split("?");

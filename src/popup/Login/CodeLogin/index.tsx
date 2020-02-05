@@ -3,11 +3,11 @@ import { useFormState } from "react-use-form-state";
 import { useMutation } from "@apollo/react-hooks";
 import { GraphQLError } from "graphql";
 
-import { IAuthResult } from "../types";
-import { LoadingIndicator } from "./LoadingIndicator";
-import { TextInput } from "./TextInput";
-import { SubmitInput } from "./SubmitInput";
-import { AUTHENTICATE_WITH_CODE } from "./queries";
+import { IAuthResult } from "../../../types";
+import { LoadingIndicator } from "../../LoadingIndicator";
+import { TextInput } from "../../TextInput";
+import { SubmitInput } from "../../SubmitInput";
+import { AUTHENTICATE_WITH_CODE } from "../../queries";
 
 
 interface ICodeLoginProps {

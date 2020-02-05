@@ -12,15 +12,6 @@
     "object-curly-spacing": [
       "error",
       "always"
-    ],
-    "import/no-webpack-loader-syntax": 0,
-    "import/no-extraneous-dependencies": [
-      "error",
-      {
-        "devDependencies": [
-          "webpack.config.js"
-        ]
-      }
     ]
   }
 }

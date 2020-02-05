@@ -2,8 +2,8 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { ApolloProvider } from "react-apollo";
 
-import client from "./client";
-import { Popup } from "./Popup";
+import client from "./popup/client";
+import { Popup } from "./popup/Popup";
 
 
 const Entry: React.FC = () => {

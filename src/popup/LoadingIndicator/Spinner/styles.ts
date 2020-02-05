@@ -1,4 +1,3 @@
-import * as React from "react";
 import styled, { keyframes } from "styled-components";
 
 
@@ -11,7 +10,7 @@ const SpinnerAnimation = keyframes`
   }
 `;
 
-const SpinnerWrapper = styled.div`
+export const SpinnerWrapper = styled.div`
   color: original;
   display: inline-block;
   position: relative;
@@ -19,7 +18,7 @@ const SpinnerWrapper = styled.div`
   height: 64px;
 `;
 
-const SpinnerBlade = styled.div`
+export const SpinnerBlade = styled.div`
   transform-origin: 32px 32px;
   animation: ${SpinnerAnimation} 1.2s linear infinite;
 
@@ -83,22 +82,3 @@ const SpinnerBlade = styled.div`
     animation-delay: 0s;
   }
 `;
-
-export const Spinner: React.FC = () => {
-  return (
-    <SpinnerWrapper>
-      <SpinnerBlade />
-      <SpinnerBlade />
-      <SpinnerBlade />
-      <SpinnerBlade />
-      <SpinnerBlade />
-      <SpinnerBlade />
-      <SpinnerBlade />
-      <SpinnerBlade />
-      <SpinnerBlade />
-      <SpinnerBlade />
-      <SpinnerBlade />
-      <SpinnerBlade />
-    </SpinnerWrapper>
-  );
-};

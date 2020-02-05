@@ -1,31 +1,21 @@
 import * as React from "react";
-import styled from "styled-components";
 import { useFormState } from "react-use-form-state";
 import { GraphQLError } from "graphql";
 import { useMutation } from "@apollo/react-hooks";
 
-import { IAuthResult } from "../types";
-import { LoadingIndicator } from "./LoadingIndicator";
-import { SubmitInput } from "./SubmitInput";
-import { TextInput } from "./TextInput";
-import { AUTHENTICATE_WITH_EMAIL } from "./queries";
+import { IAuthResult } from "../../../types";
+import { LoadingIndicator } from "../../LoadingIndicator";
+import { SubmitInput } from "../../SubmitInput";
+import { TextInput } from "../../TextInput";
+import { AUTHENTICATE_WITH_EMAIL } from "../../queries";
+import { InputGroup, PasswordLoginContainer } from "./styles";
 
-
-const PasswordLoginContainer = styled.div`
-  display: flex;
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-`;
-
-const InputGroup = styled.div``;
 
 interface IPasswordLoginProps {
   onLogin: (data: IAuthResult) => void;
 }
 
-export const PasswordLogin: React.FC<IPasswordLoginProps> = ({ onLogin }) => {
+export const Index: React.FC<IPasswordLoginProps> = ({ onLogin }) => {
   const [formState, { email: emailField, password: passwordField }] = useFormState();
   const valid = formState.validity.email && formState.validity.password;
 
