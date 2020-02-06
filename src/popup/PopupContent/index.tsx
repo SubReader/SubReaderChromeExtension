@@ -80,7 +80,7 @@ export const PopupContent: React.FC = () => {
     <MainWrapper>
       <Entry entry={entry} />
       <Button onClick={handleLogout}>
-        <FormattedMessage id="logout" />
+        <FormattedMessage id="form.button.logout" />
       </Button>
     </MainWrapper>
   );

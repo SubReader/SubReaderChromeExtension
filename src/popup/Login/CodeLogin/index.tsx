@@ -2,6 +2,7 @@ import * as React from "react";
 import { useFormState } from "react-use-form-state";
 import { useMutation } from "@apollo/react-hooks";
 import { GraphQLError } from "graphql";
+import { useIntl } from "react-intl";
 
 import { IAuthResult } from "../../../types";
 import { LoadingIndicator } from "../../LoadingIndicator";
@@ -16,6 +17,8 @@ interface ICodeLoginProps {
 
 export const CodeLogin: React.FC<ICodeLoginProps> = ({ onLogin }) => {
   const [formState, { text: textField }] = useFormState();
+  const { formatMessage } = useIntl();
+
   const valid = formState.validity.code;
 
   const [authentificateFn, authentificateRes] = useMutation(AUTHENTICATE_WITH_CODE, {
@@ -55,8 +58,8 @@ export const CodeLogin: React.FC<ICodeLoginProps> = ({ onLogin }) => {
         }
       }}
     >
-      <TextInput {...textField("code")} placeholder="Log ind kode" />
-      <SubmitInput type="submit" value="Log ind" />
+      <TextInput {...textField("code")} placeholder={formatMessage({ id: "form.placeholder.code" })} />
+      <SubmitInput type="submit" value={formatMessage({ id: "form.button.login" })} />
     </form>
   );
 };

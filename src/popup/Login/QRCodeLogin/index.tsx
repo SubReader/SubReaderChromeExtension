@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useMutation, useQuery } from "react-apollo";
+import { FormattedMessage } from "react-intl";
 
 import { IAuthResult } from "../../../types";
 import { LoadingIndicator } from "../../LoadingIndicator";
@@ -39,7 +40,9 @@ export const QRCodeLogin: React.FC<IQRCodeLoginProps> = ({ onLogin }) => {
 
   return (
     <QRCodeWrapper>
-      <QRCodeTitle>Scan QR koden med SubReader appen.</QRCodeTitle>
+      <QRCodeTitle>
+        <FormattedMessage id="login.qr.title" />
+      </QRCodeTitle>
       <QRCode size={120} value={`subreader://authenticate?id=${requestedAccess.data.requestAccess.authCode}`} />
     </QRCodeWrapper>
   );

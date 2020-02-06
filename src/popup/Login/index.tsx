@@ -5,6 +5,7 @@ import { CodeLogin } from "./CodeLogin";
 import { SchoolLogin } from "./SchoolLogin";
 import { IAuthResult } from "../../types";
 import { LoginContainer, LoginTypeButtonContainer, LoginTypeToggleButton, LoginWrapper } from "./styles";
+import { FormattedMessage } from "react-intl";
 
 
 interface ILoginProps {
@@ -32,7 +33,7 @@ export const Login: React.FC<ILoginProps> = ({ onLogin }) => {
               setShowAlternativeLogin(!showAlternativeLogin);
             }}
           >
-            {showAlternativeLogin ? "Log ind med QR" : "Log ind med kode"}
+            {showAlternativeLogin ? <FormattedMessage id="login.main.qr" /> : <FormattedMessage id="login.main.code" />}
           </LoginTypeToggleButton>
         </LoginTypeButtonContainer>
       </LoginContainer>

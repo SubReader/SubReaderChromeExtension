@@ -4,6 +4,7 @@ import { useMutation } from "@apollo/react-hooks";
 import { IAuthResult } from "../../../types";
 import { AUTHENTICATE_WITH_MVIDSIGON_MUTATION, REGISTER_WITH_MVIDSIGON_MUTATION } from "../queries";
 import { SchoolLoginButton } from "./styles";
+import { FormattedMessage } from "react-intl";
 
 
 function parseQueryParams(url: string): any {
@@ -61,7 +62,9 @@ export const SchoolLogin: React.FC<ISchoolLoginProps> = ({ onLogin }) => {
       }}
     >
       <img style={{ width: "32px", height: "auto", marginRight: "5px" }} src="graduation-hat.svg" alt="" />
-      <span>For lærere</span>
+      <span>
+        <FormattedMessage id="school.login.button" />
+      </span>
     </SchoolLoginButton>
   );
 };
