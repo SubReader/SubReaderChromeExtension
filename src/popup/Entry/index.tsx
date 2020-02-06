@@ -6,6 +6,7 @@ import { IStreamEntry } from "../../types";
 import { LoadingIndicator } from "../LoadingIndicator";
 import { STATUS } from "../../types/enums";
 import { IntroContainer, QRContainer, QRWrapper, Title, VideoGuide } from "./styles";
+import { SubmitInput } from "../SubmitInput";
 
 
 interface IEntryProps {
@@ -41,7 +42,17 @@ export const Entry: React.FC<IEntryProps> = props => {
 
   if (entry.status === STATUS.REJECTED) {
     return (
-      <iframe width={400} height={300} src="https://app.subreader.dk/subreader-home" />
+      <IntroContainer>
+        <Title>Your subscription has expired</Title>
+        <SubmitInput
+          type="button"
+          value="Subscribe"
+          onClick={(): void => {
+            const url = "https://app.subreader.dk/subreader-home";
+            chrome.tabs.create({ url });
+          }}
+        />
+      </IntroContainer>
     );
   }
 
