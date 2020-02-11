@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 
 import { PopupContent } from "../PopupContent";
 import { Logo, LogoContainer, PopupContainer, PopupWrapper } from "./styles";

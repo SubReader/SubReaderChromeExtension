@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 
 import { QRCodeLogin } from "./QRCodeLogin";
 import { CodeLogin } from "./CodeLogin";
@@ -13,7 +13,7 @@ interface ILoginProps {
 }
 
 export const Login: React.FC<ILoginProps> = ({ onLogin }) => {
-  const [showAlternativeLogin, setShowAlternativeLogin] = React.useState(false);
+  const [showAlternativeLogin, setShowAlternativeLogin] = useState(false);
 
   return (
     <LoginWrapper>

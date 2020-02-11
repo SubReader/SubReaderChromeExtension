@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { useFormState } from "react-use-form-state";
 import { GraphQLError } from "graphql";
 import { useMutation } from "@apollo/react-hooks";

@@ -1,5 +1,5 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import React, { useState, createContext, useEffect } from "react";
+import ReactDOM from "react-dom";
 import { ApolloProvider } from "react-apollo";
 import { IntlProvider } from "react-intl";
 
@@ -18,14 +18,14 @@ export interface ILocaleContext {
   getLocale: () => Locale;
 }
 
-export const LocaleContext = React.createContext<ILocaleContext>(undefined!);
+export const LocaleContext = createContext<ILocaleContext>(undefined!);
 
 const Entry: React.FC = () => {
-  const [locale, setLocale] = React.useState<Locale>(defaultLocale);
+  const [locale, setLocale] = useState<Locale>(defaultLocale);
 
   const getLocale = (): Locale => locale;
 
-  React.useEffect(() => {
+  useEffect(() => {
     chrome.i18n.getAcceptLanguages((list: Array<Locale>) => {
       for (const l of list) {
         if (locales.includes(l)) {

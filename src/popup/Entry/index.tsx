@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 // eslint-disable-next-line import/default
 import QRCode from "qrcode.react";

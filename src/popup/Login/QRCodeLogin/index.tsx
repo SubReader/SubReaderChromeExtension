@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import { useMutation, useQuery } from "react-apollo";
 import { FormattedMessage } from "react-intl";
 
@@ -20,7 +20,7 @@ export const QRCodeLogin: React.FC<IQRCodeLoginProps> = ({ onLogin }) => {
     },
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!requestedAccess.loading && requestedAccess.data) {
       pollAccessFn({
         variables: {
