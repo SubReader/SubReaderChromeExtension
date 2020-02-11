@@ -1,4 +1,5 @@
-import * as React from "react";
+import React from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 // eslint-disable-next-line import/default
 import QRCode from "qrcode.react";
 
@@ -16,10 +17,14 @@ interface IEntryProps {
 export const Entry: React.FC<IEntryProps> = props => {
   const { entry } = props;
 
+  const { formatMessage } = useIntl();
+
   if (!entry) {
     return (
       <IntroContainer>
-        <Title>Åben en streaming tjeneste for at bruge SubReader</Title>
+        <Title>
+          <FormattedMessage id="entry.absent" />
+        </Title>
         <VideoGuide src="video1.mp4" autoPlay={true} controls={true} loop={true} />
       </IntroContainer>
     );
@@ -32,7 +37,9 @@ export const Entry: React.FC<IEntryProps> = props => {
   if (entry.status === STATUS.RESOLVED) {
     return (
       <QRWrapper>
-        <Title>Scan QR koden med SubReader appen</Title>
+        <Title>
+          <FormattedMessage id="entry.resolved" />
+        </Title>
         <QRContainer>
           <QRCode size={180} level="L" value={`subreader://${entry.stream!.id}`} />
         </QRContainer>
@@ -43,10 +50,12 @@ export const Entry: React.FC<IEntryProps> = props => {
   if (entry.status === STATUS.REJECTED) {
     return (
       <IntroContainer>
-        <Title>Your subscription has expired</Title>
+        <Title>
+          <FormattedMessage id="entry.rejected" />
+        </Title>
         <SubmitInput
           type="button"
-          value="Subscribe"
+          value={formatMessage({ id: "form.button.subscribe" })}
           onClick={(): void => {
             const url = "https://app.subreader.dk/subreader-home";
             chrome.tabs.create({ url });

@@ -1,7 +1,8 @@
-import * as React from "react";
+import React from "react";
 import { useFormState } from "react-use-form-state";
 import { GraphQLError } from "graphql";
 import { useMutation } from "@apollo/react-hooks";
+import { useIntl } from "react-intl";
 
 import { IAuthResult } from "../../../types";
 import { LoadingIndicator } from "../../LoadingIndicator";
@@ -15,8 +16,10 @@ interface IPasswordLoginProps {
   onLogin: (data: IAuthResult) => void;
 }
 
-export const Index: React.FC<IPasswordLoginProps> = ({ onLogin }) => {
+export const PasswordLogin: React.FC<IPasswordLoginProps> = ({ onLogin }) => {
   const [formState, { email: emailField, password: passwordField }] = useFormState();
+  const { formatMessage } = useIntl();
+
   const valid = formState.validity.email && formState.validity.password;
 
   const [authentificateFn, authentificateRes] = useMutation(AUTHENTICATE_WITH_EMAIL, {
@@ -59,10 +62,10 @@ export const Index: React.FC<IPasswordLoginProps> = ({ onLogin }) => {
         }}
       >
         <InputGroup>
-          <TextInput {...emailField("email")} placeholder="Email" />
-          <TextInput {...passwordField("password")} placeholder="Adgangskode" />
+          <TextInput {...emailField("email")} placeholder={formatMessage({ id: "form.placeholder.email" })} />
+          <TextInput {...passwordField("password")} placeholder={formatMessage({ id: "form.placeholder.password" })} />
         </InputGroup>
-        <SubmitInput type="submit" value="Log ind" />
+        <SubmitInput type="submit" value={formatMessage({ id: "form.button.login" })} />
       </form>
     </PasswordLoginContainer>
   );

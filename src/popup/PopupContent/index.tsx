@@ -1,4 +1,5 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
+import { FormattedMessage } from "react-intl";
 
 import { IAuthResult, IStreamEntry, IUser } from "../../types";
 import { ACTION, STATUS } from "../../types/enums";
@@ -9,12 +10,12 @@ import { Button, MainWrapper } from "./styles";
 
 
 export const PopupContent: React.FC = () => {
-  const [loading, setLoading] = React.useState(false);
-  const [streams, setStreams] = React.useState<Array<IStreamEntry>>([]);
-  const [user, setUser] = React.useState<IUser | null>(null);
-  const [currentTabId, setCurrentTabId] = React.useState();
+  const [loading, setLoading] = useState(false);
+  const [streams, setStreams] = useState<Array<IStreamEntry>>([]);
+  const [user, setUser] = useState<IUser | null>(null);
+  const [currentTabId, setCurrentTabId] = useState();
 
-  React.useEffect(() => {
+  useEffect(() => {
     chrome.storage.sync.get("user", ({ user }: { user: string | null }) => {
       if (user) {
         setUser(JSON.parse(user));
@@ -78,7 +79,9 @@ export const PopupContent: React.FC = () => {
   return (
     <MainWrapper>
       <Entry entry={entry} />
-      <Button onClick={handleLogout}>Log ud</Button>
+      <Button onClick={handleLogout}>
+        <FormattedMessage id="form.button.logout" />
+      </Button>
     </MainWrapper>
   );
 };
