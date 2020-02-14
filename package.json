@@ -1,61 +1,17 @@
 {
-  "name": "subreader-chrome-extension",
-  "version": "2.1.3",
-  "description": "SubReader Chrome Extension",
-  "main": "dist/main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "start": "npm run build -- -w",
-    "lint": "eslint . --fix --ext .js,.jsx,.ts,.tsx",
-    "prettier": "prettier \"src/**/*.{js,jsx,ts,tsx}\" --write"
+  "author": "Anders Bredgaard Thuesen <andersbthuesen@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/ande765a/SubReaderChromeExtension/issues"
   },
   "config": {
     "server": "https://api.subreader.dk"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ande765a/SubReaderChromeExtension.git"
-  },
-  "author": "Anders Bredgaard Thuesen <andersbthuesen@gmail.com>",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ande765a/SubReaderChromeExtension/issues"
-  },
-  "homepage": "https://github.com/ande765a/SubReaderChromeExtension#readme",
-  "devDependencies": {
-    "@babel/core": "^7.8.3",
-    "@babel/preset-env": "^7.8.3",
-    "@babel/preset-react": "^7.8.3",
-    "@babel/preset-typescript": "^7.8.3",
-    "@trejgun/eslint-config": "^0.0.2",
-    "@typescript-eslint/eslint-plugin": "^2.17.0",
-    "@typescript-eslint/parser": "^2.17.0",
-    "@types/lodash": "^4.14.149",
-    "@types/react": "^16.9.19",
-    "@types/react-dom": "^16.9.5",
-    "@types/styled-components": "^4.4.2",
-    "@types/qrcode.react": "^1.0.0",
-    "@types/isomorphic-fetch": "^0.0.35",
-    "babel-loader": "^8.0.6",
-    "babel-plugin-lodash": "^3.3.4",
-    "copy-webpack-plugin": "^5.1.1",
-    "eslint": "^6.8.0",
-    "husky": "^4.0.10",
-    "lint-staged": "^10.0.7",
-    "prettier": "^1.19.1",
-    "progress-bar-webpack-plugin": "^2.1.0",
-    "raw-loader": "^0.5.1",
-    "typescript": "^3.7.5",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
-  },
   "dependencies": {
     "@apollo/react-hooks": "^3.1.3",
+    "apollo-cache-inmemory": "^1.6.5",
     "apollo-client": "^2.6.8",
     "apollo-link": "^1.2.13",
     "apollo-link-http": "^1.5.16",
-    "apollo-cache-inmemory": "^1.6.5",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.1",
     "isomorphic-fetch": "^2.2.1",
@@ -70,5 +26,62 @@
     "sami-parser": "^0.5.3",
     "styled-components": "^4.4.1",
     "subreader-api": "git+https://github.com/SubReader/SubReaderAPI.git"
-  }
+  },
+  "description": "SubReader Chrome Extension",
+  "devDependencies": {
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/preset-react": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
+    "@trejgun/eslint-config": "^0.0.4",
+    "@types/isomorphic-fetch": "^0.0.35",
+    "@types/lodash": "^4.14.149",
+    "@types/qrcode.react": "^1.0.0",
+    "@types/react": "^16.9.19",
+    "@types/react-dom": "^16.9.5",
+    "@types/styled-components": "^4.4.2",
+    "@typescript-eslint/eslint-plugin": "^2.19.2",
+    "@typescript-eslint/parser": "^2.19.2",
+    "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-lodash": "^3.3.4",
+    "copy-webpack-plugin": "^5.1.1",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-import-resolver-ts": "^0.4.2",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^2.3.0",
+    "eslint-plugin-standard": "^4.0.1",
+    "husky": "^4.0.10",
+    "lint-staged": "^10.0.7",
+    "prettier": "^1.19.1",
+    "progress-bar-webpack-plugin": "^2.1.0",
+    "raw-loader": "^0.5.1",
+    "typescript": "^3.7.5",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
+  },
+  "homepage": "https://github.com/ande765a/SubReaderChromeExtension#readme",
+  "license": "ISC",
+  "main": "dist/main.js",
+  "name": "subreader-chrome-extension",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ande765a/SubReaderChromeExtension.git"
+  },
+  "scripts": {
+    "build": "webpack",
+    "lint": "eslint . --fix --ext .js,.jsx,.ts,.tsx",
+    "prettier": "prettier \"src/**/*.{js,jsx,ts,tsx}\" --write",
+    "start": "npm run build -- -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "2.1.3"
 }
