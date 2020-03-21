@@ -9,7 +9,6 @@
   "description": "Få underteksterne på dine streamingtjenester læst højt med SubReader.",
   "version": "2.1.4",
   "permissions": [
-    "activeTab",
     "storage",
     "tabs",
     "identity"
