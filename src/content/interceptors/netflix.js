@@ -50,9 +50,12 @@
     });
   }
 
+  let lastURL = null;
   XMLHttpRequest.prototype.open = intercept(XMLHttpRequest.prototype.open, function(method, url) {
     if (url.indexOf("nflxvideo.net/?o") !== -1) {
       this.addEventListener("load", () => {
+        if (lastURL === window.location.href) return;
+        lastURL = window.location.href;
         handleSubtitle(this.response, "ttml");
         sendTitle();
       });
