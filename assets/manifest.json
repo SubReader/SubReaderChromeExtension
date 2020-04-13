@@ -37,6 +37,10 @@
     {
       "matches": ["*://*.urplay.se/*", "*://urplay.se/*"],
       "js": ["urplay.js"]
+    },
+    {
+      "matches": ["*://*.filmochskola.se/*", "*://filmochskola.se/*"],
+      "js": ["filmochskola.js"]
     }
   ],
   "browser_action": {

@@ -15,6 +15,7 @@ module.exports = {
     mitcfu: "./src/content/mitcfu",
     drtv: "./src/content/drtv",
     urplay: "./src/content/urplay",
+    filmochskola: "./src/content/filmochskola",
   },
   mode: "production",
   resolve: {

@@ -6,6 +6,7 @@ export enum SERVICE {
   MITCFU = "mitcfu",
   URPLAY = "urplay",
   DRTV = "drtv",
+  FILM_OCH_SKOLA = "filmochskola",
 }
 
 export enum ACTION {
