@@ -8,7 +8,6 @@ import { activateHTML5 } from "./utils/html5";
 
 const script = document.createElement("script");
 script.textContent = code;
-document.body.append(script);
 
 const service = SERVICE.MITCFU;
 
@@ -31,3 +30,5 @@ window.addEventListener("subtitles", ({ detail }) => {
 window.addEventListener("info", ({ detail }) => {
   sendMessage({ action: ACTION.INFO, payload: detail });
 });
+
+document.body.append(script);

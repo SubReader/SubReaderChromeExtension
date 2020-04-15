@@ -10,7 +10,6 @@ import { activateHTML5 } from "./utils/html5";
 
 const script = document.createElement("script");
 script.textContent = code;
-document.body.appendChild(script);
 
 const service = SERVICE.FILMCENTRALEN;
 
@@ -64,3 +63,5 @@ window.addEventListener("vtt-subtitles", ({ detail }) => {
 window.addEventListener("info", ({ detail }) => {
   sendMessage({ action: ACTION.INFO, payload: detail });
 });
+
+document.body.appendChild(script);

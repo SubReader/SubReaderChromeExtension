@@ -8,7 +8,6 @@ import { ACTION, SERVICE } from "../types/enums";
 
 const script = document.createElement("script");
 script.textContent = code;
-document.body.appendChild(script);
 
 const service = SERVICE.NETFLIX;
 
@@ -31,3 +30,5 @@ window.addEventListener("subtitles", ({ detail }) => {
 window.addEventListener("info", ({ detail }) => {
   sendMessage({ action: ACTION.INFO, payload: detail });
 });
+
+document.body.appendChild(script);

@@ -9,7 +9,6 @@ const service = SERVICE.DRTV;
 
 const script = document.createElement("script");
 script.textContent = code;
-document.body.appendChild(script);
 
 function sendMessage({ action, payload }: { action: ACTION; payload: any }): void {
   chrome.runtime.sendMessage({
@@ -28,3 +27,5 @@ window.addEventListener("subtitles", ({ detail }) => {
 window.addEventListener("info", ({ detail }) => {
   sendMessage({ action: ACTION.INFO, payload: detail });
 });
+
+document.body.appendChild(script);

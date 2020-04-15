@@ -10,7 +10,6 @@ import { ACTION, SERVICE } from "../types/enums";
 
 const script = document.createElement("script");
 script.textContent = code;
-document.body.appendChild(script);
 
 const service = SERVICE.VIAPLAY;
 
@@ -58,3 +57,5 @@ window.addEventListener("info", ({ detail }) => {
     payload: detail,
   });
 });
+
+document.body.appendChild(script);
