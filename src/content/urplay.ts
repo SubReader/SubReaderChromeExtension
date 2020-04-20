@@ -36,8 +36,10 @@ window.addEventListener("vtt-tracks", ({ detail }) => {
           return {
             language: track.language,
             cues: vtt.cues.map((cue: any) => {
+              const div = document.createElement("div");
+              div.innerHTML = cue.text;
               return {
-                text: cue.text,
+                text: div.innerText,
                 timeIn: (cue.start * 1000) | 0,
                 timeOut: (cue.end * 1000) | 0,
               };
