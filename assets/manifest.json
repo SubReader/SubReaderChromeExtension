@@ -7,7 +7,7 @@
   },
   "name": "SubReader",
   "description": "Få underteksterne på dine streamingtjenester læst højt med SubReader.",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "permissions": [
     "storage",
     "tabs",
