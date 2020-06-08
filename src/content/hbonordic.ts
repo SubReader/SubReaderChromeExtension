@@ -5,7 +5,7 @@ import code from "raw-loader!babel-loader!./interceptors/hbonordic";
 import { ACTION, SERVICE } from "../types/enums";
 
 
-const service = SERVICE.MITCFU;
+const service = SERVICE.HBONORDIC;
 
 const script = document.createElement("script");
 script.textContent = code;
