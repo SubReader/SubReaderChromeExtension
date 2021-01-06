@@ -9,7 +9,7 @@ import * as supportedLocales from "./i18n";
 
 type Locale = keyof typeof supportedLocales;
 const locales = Object.keys(supportedLocales) as Array<Locale>;
-const defaultLocale: Locale = locales.find(locale => navigator.languages[0].match(locale)) || locales[0];
+const defaultLocale: Locale = locales.find(locale => navigator.languages[0].match(locale)) || "en";
 
 export interface ILocaleContext {
   setLocale: (locale: Locale) => void;
@@ -21,6 +21,7 @@ export const LocaleContext = createContext<ILocaleContext>(undefined!);
 const Entry: React.FC = () => {
   const [locale, setLocale] = useState<Locale>(defaultLocale);
   const getLocale = (): Locale => locale;
+  console.log(flattenMessages(supportedLocales[locale]));
 
   return (
     <LocaleContext.Provider
