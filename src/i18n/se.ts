@@ -1,31 +1,31 @@
 export const se = {
   entry: {
-    absent: "Åben en streaming tjeneste for at bruge SubReader",
-    resolved: "Scan QR koden med SubReader appen",
-    rejected: "Your subscription has expired",
+    absent: "Öppna en streamingtjänst för att använda SubReader",
+    resolved: "Skanna QR-koden med SubReader appen",
+    rejected: "Din prenumeration har gått ut",
   },
   login: {
     main: {
-      code: "Log ind med kode",
-      qr: "Log ind med QR",
+      code: "Logga in med kod",
+      qr: "Logga in med QR",
     },
     qr: {
-      title: "Scan QR koden med SubReader appen.",
+      title: "Skanna QR-koden med SubReader appen.",
     },
     school: {
-      button: "For lærere",
+      button: "För lärare",
     },
   },
   form: {
     placeholder: {
-      code: "Kode",
-      email: "Email",
-      password: "Adgangskode",
+      code: "Kod",
+      email: "E-post",
+      password: "Lösenord",
     },
     button: {
-      subscribe: "Subscribe",
-      login: "Log ind",
-      logout: "Log ud",
+      subscribe: "Prenumerera",
+      login: "Logga in",
+      logout: "Logga ut",
     },
   },
 };
