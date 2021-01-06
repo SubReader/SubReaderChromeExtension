@@ -1,8 +1,8 @@
-export const da = {
+export const se = {
   entry: {
     absent: "Åben en streaming tjeneste for at bruge SubReader",
     resolved: "Scan QR koden med SubReader appen",
-    rejected: "Dit abonnement er udløbet",
+    rejected: "Your subscription has expired",
   },
   login: {
     main: {

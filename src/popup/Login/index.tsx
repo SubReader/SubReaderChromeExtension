@@ -7,7 +7,6 @@ import { IAuthResult } from "../../types";
 import { LoginContainer, LoginTypeButtonContainer, LoginTypeToggleButton, LoginWrapper } from "./styles";
 import { FormattedMessage } from "react-intl";
 
-
 interface ILoginProps {
   onLogin: (data: IAuthResult) => void;
 }

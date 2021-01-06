@@ -8,7 +8,6 @@ import { Login } from "../Login";
 import { Entry } from "../Entry";
 import { Button, MainWrapper } from "./styles";
 
-
 export const PopupContent: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [streams, setStreams] = useState<Array<IStreamEntry>>([]);
@@ -62,8 +61,8 @@ export const PopupContent: React.FC = () => {
   const entry = streams
     .sort((a, b) => {
       return (
-        statusSortingOrder.findIndex(status => status === a.status)
-        - statusSortingOrder.findIndex(status => status === b.status)
+        statusSortingOrder.findIndex(status => status === a.status) -
+        statusSortingOrder.findIndex(status => status === b.status)
       );
     })
     .find(stream => stream.id === currentTabId);
