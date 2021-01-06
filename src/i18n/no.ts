@@ -1,16 +1,16 @@
 export const no = {
   entry: {
-    absent: "Åben en streaming tjeneste for at bruge SubReader",
-    resolved: "Scan QR koden med SubReader appen",
+    absent: "Åpne en streamingtjeneste for å bruke SubReader",
+    resolved: "Skann QR-koden med SubReader-appen",
     rejected: "Your subscription has expired",
   },
   login: {
     main: {
-      code: "Log ind med kode",
-      qr: "Log ind med QR",
+      code: "Logg inn med kode",
+      qr: "Logg inn med QR",
     },
     qr: {
-      title: "Scan QR koden med SubReader appen.",
+      title: "Skann QR-koden med SubReader-appen.",
     },
     school: {
       button: "For lærere",
@@ -18,14 +18,14 @@ export const no = {
   },
   form: {
     placeholder: {
-      code: "Log ind kode",
-      email: "Email",
-      password: "Adgangskode",
+      code: "Logg inn kode",
+      email: "E-mail",
+      password: "Passord",
     },
     button: {
       subscribe: "Subscribe",
-      login: "Log ind",
-      logout: "Log ud",
+      login: "Logg inn",
+      logout: "Logg ut",
     },
   },
 };
