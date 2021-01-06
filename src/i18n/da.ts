@@ -18,7 +18,7 @@ export const da = {
   },
   form: {
     placeholder: {
-      code: "Log ind kode",
+      code: "Kode",
       email: "Email",
       password: "Adgangskode",
     },
