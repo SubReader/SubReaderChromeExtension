@@ -21,7 +21,6 @@ export const LocaleContext = createContext<ILocaleContext>(undefined!);
 const Entry: React.FC = () => {
   const [locale, setLocale] = useState<Locale>(defaultLocale);
   const getLocale = (): Locale => locale;
-  console.log(flattenMessages(supportedLocales[locale]));
 
   return (
     <LocaleContext.Provider
