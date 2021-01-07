@@ -6,7 +6,6 @@ import { AUTHENTICATE_WITH_MVIDSIGON_MUTATION, REGISTER_WITH_MVIDSIGON_MUTATION 
 import { SchoolLoginButton } from "./styles";
 import { FormattedMessage } from "react-intl";
 
-
 function parseQueryParams(url: string): any {
   const [, queryParams] = url.split("?");
   return queryParams.split("&").reduce((acc: object, kvPair: string) => {
@@ -63,7 +62,7 @@ export const SchoolLogin: React.FC<ISchoolLoginProps> = ({ onLogin }) => {
     >
       <img style={{ width: "32px", height: "auto", marginRight: "5px" }} src="graduation-hat.svg" alt="" />
       <span>
-        <FormattedMessage id="school.login.button" />
+        <FormattedMessage id="login.school.button" />
       </span>
     </SchoolLoginButton>
   );

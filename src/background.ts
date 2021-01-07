@@ -6,7 +6,6 @@ import { authorizedClient } from "./popup/client";
 import { getDefaultTitleForService } from "./background/utils";
 import { CREATE_USER_STREAM } from "./background/queries";
 
-
 const openedStreams: Array<IStreamEntry> = [];
 
 function getStreamEntry(id: string, service: SERVICE, stream: any): IStreamEntry {
@@ -22,9 +21,9 @@ function getStreamEntry(id: string, service: SERVICE, stream: any): IStreamEntry
 
   const entry = openedStreams.find(entry => {
     return (
-      entry.id === id
-      && entry.supportedServices.includes(service)
-      && (entry.status === STATUS.PENDING || entry.status === STATUS.RESOLVED)
+      entry.id === id &&
+      entry.supportedServices.includes(service) &&
+      (entry.status === STATUS.PENDING || entry.status === STATUS.RESOLVED)
     );
   });
 
@@ -136,8 +135,8 @@ chrome.runtime.onMessage.addListener(
             ...entry,
             stream: entry.stream
               ? {
-                id: entry.stream.id,
-              }
+                  id: entry.stream.id,
+                }
               : null,
           })),
         });

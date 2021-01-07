@@ -18,7 +18,7 @@ export const en = {
   },
   form: {
     placeholder: {
-      code: "Login with code",
+      code: "Code",
       email: "Email",
       password: "Password",
     },

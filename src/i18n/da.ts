@@ -2,12 +2,7 @@ export const da = {
   entry: {
     absent: "Åben en streaming tjeneste for at bruge SubReader",
     resolved: "Scan QR koden med SubReader appen",
-    rejected: "Your subscription has expired",
-  },
-  school: {
-    login: {
-      button: "For lærere",
-    },
+    rejected: "Dit abonnement er udløbet",
   },
   login: {
     main: {
@@ -17,10 +12,13 @@ export const da = {
     qr: {
       title: "Scan QR koden med SubReader appen.",
     },
+    school: {
+      button: "For lærere",
+    },
   },
   form: {
     placeholder: {
-      code: "Log ind kode",
+      code: "Kode",
       email: "Email",
       password: "Adgangskode",
     },
