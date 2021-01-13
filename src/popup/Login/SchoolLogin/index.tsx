@@ -63,7 +63,7 @@ export const SchoolLogin: React.FC<ISchoolLoginProps> = ({ onLogin }) => {
     >
       <img style={{ width: "32px", height: "auto", marginRight: "5px" }} src="graduation-hat.svg" alt="" />
       <span>
-        <FormattedMessage id="school.login.button" />
+        <FormattedMessage id="login.school.button" />
       </span>
     </SchoolLoginButton>
   );
