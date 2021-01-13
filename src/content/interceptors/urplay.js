@@ -9,11 +9,11 @@
 
   if (window.jwplayer) {
     const player = window.jwplayer();
-    const { tracks, title } = player.getConfig();
+    const { captionsList, title } = player.getConfig();
 
     sendInfo({ title });
 
-    const vttTracks = tracks
+    const vttTracks = captionsList
       .filter(track => {
         return track.label && Object.keys(LANGUAGE_MAP).includes(track.label.toLowerCase());
       })
