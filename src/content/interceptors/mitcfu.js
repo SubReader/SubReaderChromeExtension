@@ -32,7 +32,7 @@
   function sendSubtitles(subtitles) {
     window.dispatchEvent(new CustomEvent("subtitles", { detail: subtitles }));
   }
-
+  const kWidget = window.kWidget;
   const GoBrain = window.GoBrain;
   if (GoBrain) {
     const { data } = GoBrain.widgets().player.embedSettings;
@@ -87,7 +87,12 @@
       .then(subtitles => {
         sendSubtitles(subtitles);
       });
-  } else if (window.kWidget) {
-    //DOCS - http://player.kaltura.com/docs/api
+  } else if (kWidget) {
+    //API DOCS - http://player.kaltura.com/docs/api
+    const iframe = document.querySelector("#MitCFUPlayer_ifp");
+    if (iframe && iframe.windowContent) {
+      const video = iframe.contentWindow.document.querySelector("video[src]");
+      const id = video.getAttribute("kwidgetid");
+    }
   }
 })();
