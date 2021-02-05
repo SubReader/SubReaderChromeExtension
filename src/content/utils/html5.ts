@@ -4,11 +4,25 @@ import _ from "lodash";
 import { SERVICE, ACTION } from "../../types/enums";
 
 
+const getVideoElement = (service: SERVICE): HTMLVideoElement | null => {
+  let video: HTMLVideoElement | null = document.querySelector("video[src]");
+
+  if (service === "mitcfu" && !video) {
+    const iframe: HTMLIFrameElement | null = document.querySelector("#MitCFUPlayer_ifp");
+    if (iframe && iframe.contentWindow) {
+      const iframeVideo: HTMLVideoElement | null = iframe.contentWindow.document.querySelector("video[src]");
+      if (iframeVideo) video = iframeVideo;
+    }
+  }
+  return video;
+};
+
 export function activateHTML5(service: SERVICE): void {
   let found = false;
 
   new MutationObserver(() => {
-    const video: HTMLVideoElement | null = document.querySelector("video[src]");
+    const video = getVideoElement(service);
+
     if (!video && found) {
       found = false;
       chrome.runtime.sendMessage({

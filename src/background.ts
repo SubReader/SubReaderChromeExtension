@@ -120,6 +120,7 @@ chrome.runtime.onMessage.addListener(
         console.info("Setting state", payload);
         const state = payload;
         const { stream } = getStreamEntry(sender.tab.id, service, { state });
+        console.info(stream);
         if (stream) {
           stream.setState(state);
         }
