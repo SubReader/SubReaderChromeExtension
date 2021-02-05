@@ -21,10 +21,7 @@
       return {
         timeIn: parseTime(entry.Time),
         timeOut: parseTime(entry.Time) + parseTime(entry.Duration),
-        text:
-          entry.Line1
-          + (entry.Line2 ? "\n " + entry.Line2 : "")
-          + (entry.Line3 ? "\n " + entry.Line3 : ""),
+        text: entry.Line1 + (entry.Line2 ? "\n " + entry.Line2 : "") + (entry.Line3 ? "\n " + entry.Line3 : ""),
       };
     });
   }
@@ -44,6 +41,7 @@
         return JSON.parse(text);
       })
       .then(data => {
+        console.info(data);
         const { asset, metadata } = data;
 
         sendInfo({
@@ -57,9 +55,7 @@
               [],
               (subtitle.renditions || []).map(r => r.links),
             );
-            const jsonLinks = links.filter(
-              l => l.mimeType === "application/json",
-            );
+            const jsonLinks = links.filter(l => l.mimeType === "application/json");
 
             let language;
             try {
@@ -91,5 +87,7 @@
       .then(subtitles => {
         sendSubtitles(subtitles);
       });
+  } else if (window.kWidget) {
+    //DOCS - http://player.kaltura.com/docs/api
   }
 })();
