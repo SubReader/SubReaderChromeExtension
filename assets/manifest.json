@@ -15,30 +15,37 @@
   ],
   "content_scripts": [
     {
+      "run_at" : "document_idle",
       "matches": ["*://*.netflix.com/*", "*://netflix.com/*"],
       "js": ["netflix.js"]
     },
     {
+      "run_at" : "document_idle",
       "matches": ["*://*.hbonordic.com/*", "*://hbonordic.com/*"],
       "js": ["hbonordic.js"]
     },
     {
+      "run_at" : "document_idle",
       "matches": ["*://*.viaplay.dk/*", "*://viaplay.dk/*"],
       "js": ["viaplay.js"]
     },
     {
+      "run_at" : "document_idle",
       "matches": ["*://*.filmcentralen.dk/*", "*://filmcentralen.dk/*"],
       "js": ["filmcentralen.js"]
     },
     {
+      "run_at" : "document_idle",
       "matches": ["*://*.hval.dk/mitcfu/*", "*://hval.dk/mitcfu/*", "*://*.hval.dk/mitCFU/*", "*://hval.dk/mitCFU/*"],
       "js": ["mitcfu.js"]
     },
     {
+      "run_at" : "document_idle",
       "matches": ["*://*.urplay.se/*", "*://urplay.se/*"],
       "js": ["urplay.js"]
     },
     {
+      "run_at" : "document_idle",
       "matches": ["*://*.filmochskola.se/*", "*://filmochskola.se/*"],
       "js": ["filmochskola.js"]
     }

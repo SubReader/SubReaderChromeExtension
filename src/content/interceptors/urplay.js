@@ -8,23 +8,37 @@
   }
 
   if (window.jwplayer) {
-    const player = window.jwplayer();
-    const { captionsList, title } = player.getConfig();
-
-    sendInfo({ title });
-
-    const vttTracks = captionsList
-      .filter(track => {
-        return track.label && Object.keys(LANGUAGE_MAP).includes(track.label.toLowerCase());
-      })
-      .map(track => {
-        const language = LANGUAGE_MAP[track.label.toLowerCase()];
-        return {
-          language,
-          url: track.file,
+    const watchJwplayer = setInterval(() => {
+      const player = window.jwplayer();
+      try {
+        const config = player.getConfig();
+        const { captionsList } = config;
+        const { title, image } = config.playlistItem;
+        const info = {
+          title,
+          backdrop: { uri: image },
+          cover: { uri: image },
         };
-      });
+        sendInfo(info);
+        clearInterval(watchJwplayer);
+        sendVttTracks(captionsList);
+      } catch (error) {}
+    }, 50);
 
-    window.dispatchEvent(new CustomEvent("vtt-tracks", { detail: vttTracks }));
+    function sendVttTracks(captionsList) {
+      const vttTracks = captionsList
+        .filter(track => {
+          return track.label && Object.keys(LANGUAGE_MAP).includes(track.label.toLowerCase());
+        })
+        .map(track => {
+          const language = LANGUAGE_MAP[track.label.toLowerCase()];
+          return {
+            language,
+            url: track.id,
+          };
+        });
+
+      window.dispatchEvent(new CustomEvent("vtt-tracks", { detail: vttTracks }));
+    }
   }
 })();
