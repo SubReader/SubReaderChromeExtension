@@ -86,5 +86,5 @@
     "start": "npm run build -- -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "2.2.3"
+  "version": "2.2.5"
 }
