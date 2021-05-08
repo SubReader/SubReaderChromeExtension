@@ -15,7 +15,7 @@
     "graphql": "^14.7.0",
     "graphql-tag": "^2.11.0",
     "isomorphic-fetch": "^2.2.1",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "node-webvtt": "^1.9.3",
     "qrcode.react": "^1.0.1",
     "react": "^16.14.0",
